@@ -3,8 +3,7 @@
 // Constants
 
 const date_tomorrow = new Date();
-// REVERT THIS
-date_tomorrow.setDate(date_tomorrow.getDate()+2);
+date_tomorrow.setDate(date_tomorrow.getDate()+1);
 
 const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\""
 
