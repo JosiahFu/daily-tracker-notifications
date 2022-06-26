@@ -3,18 +3,15 @@
 //   return array;
 // }
 
-function formatEventsAsEmail(contents) {
-  // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
-  // let contentRaw = ""
+function formatEventsAsEmail(contents, url, grade, date) {
   let hasContent = false;
 
   let contentFormatted = 
     "<!DOCTYPE html><html><head><style>" + style + "</style></head><body>" +
-    "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" +
-    "<p>Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p>" +
-    "<p class=\"link\"><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
+    "<h1>" + grade + "th Grade Tracker Events on " + monthNames[date.getMonth()] + " " + date.getDate() + "</h1>" +
+    "<p>Block schedule classes apply to both days, so for example if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p>" +
+    "<p class=\"link\"><a href=\"" + url + "\" target=\"_blank\">Link to the daily tracker</a></p>" +
     "<div class=\"container\">";
-    // "<h1>Tracker Events Today</h1>";
 
   for (let i of Object.keys(contents)) {
     contentFormatted += htmlFormatSubject(i, contents[i], i == Object.keys(contents)[0]);
@@ -30,9 +27,9 @@ function formatEventsAsEmail(contents) {
 
   contentFormatted +=
     "</div>" +
-    "<p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
-    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>" +
-    "<p>Invite more people: <a href=\"https://groups.google.com/a/student.davincischools.org/g/10th-daily-tracker-list-morning\" target=\"_blank\">Morning Notifications</a> | <a href=\"https://groups.google.com/a/student.davincischools.org/g/10th-daily-tracker-list-evening\" target=\"_blank\">Evening Notifications</a>" +
+    "<p><a href=\"" + url + "\" target=\"_blank\">Link to the daily tracker</a></p>" +
+    "<p>Something looks wrong here? Have a suggestion? <a href=\"mailto:josiah_fu@student.davincischools.org\">Let me know!</a></p>" +
+    "<p><a href=\"https://docs.google.com/forms/d/e/1FAIpQLSeKJgt3rFpeZJNgXbS1eRpiY4NewP5r6ZvVEgMDflHKivxC9A/viewform?usp=sf_link\" target=\"_blank\">Change your settings or sign up someone else</a></p>" +
     "<p>Disclaimer: I cannot guarantee that every email will have up-to-date information, or that it is even sent. Sometimes code just breaks, there can be untested edge cases, or even Google could go down. It is your responsibility to know when your assignments are due. These notifications are provided as a convenience, not a replacement.</p></body></html>";
 
   return contentFormatted;

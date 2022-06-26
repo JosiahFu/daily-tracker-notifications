@@ -1,29 +1,49 @@
 function testRemind() {
-  sendRemindEmail("josiah_fu@student.davincischools.org", null, trackerSpreadsheet);
+  sendRemindEmail("josiah_fu@student.davincischools.org", 10, date_today);
 }
 
 function test() {
-  console.log(parseMainCalendar(trackerSpreadsheet, 4, 30));
+  console.log(parseSubjectCalendar(trackerSpreadsheetsData[9].subjects[0], dates.today.getMonth(), dates.today.getDate())); // TOTEST
+
+}
+
+function remindMidnight() {
+  sendRemindEmails(midnight)
 }
 
 function remindMorning() {
-  sendRemindEmail("10th-daily-tracker-list-morning@student.davincischools.org","josiah_fu@student.davincischools.org", trackerSpreadsheet);
+  sendRemindEmails(morning);
+}
+
+function remindNoon() {
+  sendRemindEmails(noon);
+}
+
+function remindAfternoon() {
+  sendRemindEmails(afternoon);
 }
 
 function remindEvening() {
-  sendRemindEmail("10th-daily-tracker-list-evening@student.davincischools.org","josiah_fu@student.davincischools.org", trackerSpreadsheet);
+  sendRemindEmails(evening);
 }
 
-function sendRemindEmail(recipient, bccRecipient, spreadsheet) {
-  let contents = getEvents(date_tomorrow.getMonth(), date_tomorrow.getDate(), spreadsheet);
-  // console.log(contents);
-  let contentFormatted = formatEventsAsEmail(contents);
 
-  console.log(contentFormatted);
+function sendRemindEmails(time) {
+  for (let i of [9,10,11,12])
+    sendRemindEmail(getRecipients(i,"today",time), i, date_today);
+  for (let i of [9,10,11,12])
+    sendRemindEmail(getRecipients(i,"tomorrow",time), i, date_tomorrow);
+}
+
+function sendRemindEmail(recipient, grade, date) {
+  let trackerSpreadsheet = trackerSpreadsheetsData[grade];
+  let contents = getEvents(date, trackerSpreadsheet);
+  let contentFormatted = formatEventsAsEmail(contents, trackerSpreadsheet.spreadsheet.getUrl(), grade, date);
 
   if (contentFormatted == null) {
-    console.log("No events were found");
+    console.warn("No events were found");
   } else {
-    MailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", { htmlBody: contentFormatted, bcc: bccRecipient });
+    console.log("Sending email to grade " + grade + " on " + (date.getMonth() + 1) + "/" + date.getDate());
+    MailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date.getMonth()] + " " + date.getDate(), "", { htmlBody: contentFormatted });
   }
 }

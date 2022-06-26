@@ -1,16 +1,92 @@
-/*<style>.container {display: flex; flex-wrap: wrap;} .child {flex-grow: 1; width: 300px; margin: 10px; background-color: gainsboro; padding: 10px;} h3 {font-size: 1.3em;}</style>*/
-
 const date_today = new Date();
 const date_tomorrow = new Date();
+
 date_tomorrow.setDate(date_today.getDate()+1);
+
+const _testing = true;
+if (_testing) {
+  console.warn("Test mode is currently on");
+  date_today.setMonth(7),
+  date_today.setDate(23);
+  date_today.setFullYear(2021);
+}
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-// const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", "Spanish 2", "Spanish 2 Native", "PBS", "World History"];
+const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1cn8dF4paE3l77010T0-aaAVNn14uW40RU8hwWL4N1_Y/edit");
 
-const trackerSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569");
+const dateFormat = {
+  date: Symbol(),
+  week_block: Symbol(),
+  week_day: Symbol()
+}
 
-style = `
+class CalendarSheet {
+  constructor(name, headerRows, dateColumn = null, dateFormat = null, infoColumns = null) {
+    this.name = name;
+    this.headerRows = headerRows;
+    this.dateColumn = dateColumn;
+    this.dateFormat = dateFormat;
+    this.infoColumns = infoColumns;
+  }
+
+  findSheet(spreadsheet) {
+    this.sheet = spreadsheet.getSheetByName(this.name);
+    if (this.sheet == null) {
+      throw "Could not find sheet \"" + this.name + "\", check name spelling";
+    }
+  }
+}
+
+class TrackerSpreadsheet {
+  constructor(url, main, ...subjects) {
+    this.spreadsheet = SpreadsheetApp.openByUrl(url);
+    if (this.spreadsheet == null) {
+      throw "Could not find spreadsheet (which contains \"" + main.name + "\"), check URL";
+    }
+    this.main = main;
+    this.subjects = subjects;
+  }
+
+  findSheets() {
+    this.main.findSheet(this.spreadsheet);
+    for (let i of this.subjects)
+      i.findSheet(this.spreadsheet);
+  }
+}
+
+const midnight = "midnight";
+const morning = "morning";
+const noon = "noon";
+const afternoon = "afternoon";
+const evening = "evening";
+
+const timeSheets = {
+  today: {
+    9: timeSpreadsheet.getSheetByName("Today9"),
+    10: timeSpreadsheet.getSheetByName("Today10"),
+    11: timeSpreadsheet.getSheetByName("Today11"),
+    12: timeSpreadsheet.getSheetByName("Today12")
+  },
+  tomorrow: {
+    9: timeSpreadsheet.getSheetByName("Tomorrow9"),
+    10: timeSpreadsheet.getSheetByName("Tomorrow10"),
+    11: timeSpreadsheet.getSheetByName("Tomorrow11"),
+    12: timeSpreadsheet.getSheetByName("Tomorrow12")
+  }
+}
+
+const sheetHeight = 100;
+
+const timeColumns = {
+  midnight: 1,
+  morning: 2,
+  noon: 3,
+  afternoon: 4,
+  evening: 5
+}
+
+const style = `
 /*@import url('https://fonts.googleapis.com/css2?family=Asap+Condensed&display=swap');
 
 body {
