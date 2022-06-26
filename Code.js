@@ -108,9 +108,9 @@ function formatTrackerEvents(contents, isCopy) {
 
   let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">";
 
-  let mainCalendar = contents.shift()[0];
+  let mainCalendar = contents.shift();
   if (mainCalendar != null) {  
-    contentFormatted += htmlFormat(categoryNames[0], mainCalendar);
+    contentFormatted += htmlFormat(categoryNames[0], mainCalendar[0]);
     empty = false;
   }
   
