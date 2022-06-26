@@ -5,7 +5,7 @@
 const date_tomorrow = new Date();
 date_tomorrow.setDate(date_tomorrow.getDate()+1);
 
-const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\""
+const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\"";
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -41,7 +41,7 @@ function getEvents(month, date, spreadsheet) {
   // let mainContents = ;
   let allSheetContents = [parseMainCalendar(mainCalendar, month, date)];
 
-  // console.log(output);
+  console.log(allSheetContents[0]);
 
   for (let i of sheets) {
     let sheetContentArray = parseSubjectCalendar(i, month, date);
@@ -96,14 +96,8 @@ function formatEventsAsEmail(contents) {
 
   let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + "<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">";
 
-  let mainCalendar = contents.shift();
-  if (Object.keys(mainCalendar).length > 0) {
-    empty = false;
-  }
-  contentFormatted += htmlFormat(categoryNames[0], mainCalendar);
-
   for (let i = 0; i < contents.length; i++) {
-    contentFormatted += htmlFormat2(categoryNames[i + 1], contents[i]);
+    contentFormatted += htmlFormat(categoryNames[i], contents[i], i == 0);
 
     if (Object.keys(contents[i]).length > 0) {
       empty = false;
@@ -185,25 +179,13 @@ function trimArray(array) {
   return array;
 }
 
-function htmlFormat(title, content) {
-  let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
-  if (Object.keys(content).length == 0) {
-    output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
-  } else {
-    output += "<ul><li>" + content["main"].join("</li><li>") + "</li></ul>";
-  }
-  output += "</div>";
-
-  return output;
-}
-
-function htmlFormat2(title, contents) {
+function htmlFormat(title, contents, isMain) {
   let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
   
   let hasContent = false;
   for (let i of Object.keys(contents)) {
     if (contents[i] != '') {
-      output += "<h3>" + i + "</h3>" +
+      output += isMain ? "" : ("<h3>" + i + "</h3>") +
         "<ul><li>" + contents[i].join("</li><li>") + "</li></ul>"
       hasContent = true;
     }
