@@ -64,22 +64,16 @@ function getEvents(month, date, spreadsheet) {
         categoryArray.push(sectionContentsArray);
       }    
     }
-    
-    if (categoryArray.length == 1) {
-      if (categoryArray[0][0].length == 0) {
-        output.push(null);
-      } else {
-        output.push(categoryArray);
-      }
-    } else if(categoryArray.length == 2) {
-      if (categoryArray[0][0].length == 0 && categoryArray[1][0].length == 0) {
-        output.push(null);
-      } else {
-        output.push(categoryArray);
-      }
-    } else {
+
+    let empty = true;
+    for (let i of categoryArray)
+      if (i[0].length > 0)
+        empty = false;
+
+    if (empty)
       output.push(null);
-    }
+    else
+      output.push(categoryArray);
   }
 
   console.log(output);
@@ -110,14 +104,14 @@ function formatTrackerEvents(contents, isCopy) {
 
   let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">";
 
-  let mainCalendar = contents.shift();
+  let mainCalendar = contents.shift()[0];
   if (mainCalendar != null) {  
     contentFormatted += htmlFormat(categoryNames[0], mainCalendar);
     empty = false;
   }
   
   for (let i = 0; i < contents.length; i++) {
-    contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work"], contents[i]);
+    contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work", "Resources/Notes"], contents[i]);
     if (contents[i] != null) {
       empty = false;
     }
@@ -172,14 +166,14 @@ function parseMainCalendar(sheet, currentMonth, currentDate) {
 }
 
 function parseSubjectCalendar(sheet, currentMonth, currentDate) {
-  let range = sheet.getRange("C4:E");
+  let range = sheet.getRange("C4:F");
 
   for (let row = 0; row < range.getHeight(); row++) {
     dateString = range.getCell(row+1,1).getDisplayValue().toString();
     dates = dateString.split(',');
     for (let i = 0; i < dates.length; i++) dates[i] = dates[i].trim();
     if (dates.includes((currentMonth+1)+"/"+currentDate)){
-      return [range.getCell(row+1,2).getValue(), range.getCell(row+1,3).getValue()];
+      return [range.getCell(row+1,2).getValue(), range.getCell(row+1,3).getValue(), range.getCell(row+1,4).getValue()];
     }
   }
   return [];
