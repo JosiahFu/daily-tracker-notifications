@@ -73,18 +73,22 @@ function getEvents(month, date, spreadsheet) {
 }
 
 function sendRemindEmail(recipient, spreadsheet) {
+  sendRemindEmail(recipient, spreadsheet, false);
+}
+
+function sendRemindEmail(recipient, spreadsheet, isCopy) {
   let contents = getEvents(date_now.getMonth(), date_now.getDate(), spreadsheet);
   // console.log(contents);
-  let contentFormatted = formatTrackerEvents(contents);
+  let contentFormatted = formatTrackerEvents(contents, isCopy);
 
   GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_now.getMonth()] + " " + date_now.getDate(), "", {htmlBody: contentFormatted});
 }
 
-function formatTrackerEvents(contents) {
+function formatTrackerEvents(contents, isCopy) {
     // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
   // let contentRaw = ""
 
-  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + "</h1><p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p><div style=\"width:100%;\">" +
+  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<div style=\"width:100%;\">" +
     htmlFormat(categoryNames[0], contents.shift());
   
   for (let i = 0; i < contents.length; i++) {
