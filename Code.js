@@ -108,7 +108,7 @@ function formatTrackerEvents(contents, isCopy) {
   // let contentRaw = ""
   let empty = true;
 
-  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<div style=\"width:100%;\">";
+  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">";
 
   let mainCalendar = contents.shift();
   if (mainCalendar != null) {  
@@ -117,8 +117,8 @@ function formatTrackerEvents(contents, isCopy) {
   }
   
   for (let i = 0; i < contents.length; i++) {
+    contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work"], contents[i]);
     if (contents[i] != null) {
-      contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work"], contents[i]);
       empty = false;
     }
   }
@@ -193,23 +193,29 @@ function trimArray(array) {
 }
 
 function htmlFormat(title, content) {
+  let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
   if (content == null) {
-    return "";
+    output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
+  } else {
+    output += "<ul><li>"+content.join("</li><li>")+"</li></ul>";
   }
-  return (
-    "<div " + flexChildStyle + "><h2>" + title + "</h2>" +
-    "<ul><li>"+content.join("</li><li>")+"</li></ul></div>"
-  );
+  output += "</div>";
+
+  return output;
 }
 
 function htmlFormat2(title, subtitles, contents) {
   let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
-  for (let i = 0; i < contents.length; i++) {
-    if (contents[i][0] != '') {
-      output += "<h3>" + subtitles[i] + "</h3>" +
-        "<ul><li>"+contents[i].join("</li><li>")+"</li></ul>"
+  if (contents == null) {
+    output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
+  } else {
+    for (let i = 0; i < contents.length; i++) {
+      if (contents[i][0] != '') {
+        output += "<h3>" + subtitles[i] + "</h3>" +
+          "<ul><li>"+contents[i].join("</li><li>")+"</li></ul>"
+      }
     }
   }
   output += "</div>";
-  return output;
+  return output; // TODO: Add "none"
 }
