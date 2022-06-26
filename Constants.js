@@ -2,7 +2,7 @@
 
 const date_today = new Date();
 const date_tomorrow = new Date();
-date_tomorrow.setDate(date_today.getDate()+3);
+date_tomorrow.setDate(date_today.getDate()+1);
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
