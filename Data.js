@@ -55,26 +55,25 @@ function parseMainCalendar(sheet, currentMonth, currentDate) {
 
       let value = cell.getValue().toString();
 
-      let split = value.indexOf('|')
+      let dateMatches = /\d+/g.exec(value); // Get the first sequence of digits
 
-      let dateString = value.substring(0, split - 1);
-      let date = parseInt(dateString);
-      // let date = 0;
+      if (dateMatches != null) {
+        let date = parseInt(dateMatches[0]);
+        if (!isNaN(date)) {
+          if (p_date > date) {
+            month = (month + 1) % 12;
+          }
 
-      if (!isNaN(date)) {
-        if (p_date > date) {
-          month = (month + 1) % 12;
+          // console.log(month + ' ' + date);
+
+          if (month == currentMonth && date == currentDate) {
+            // content = value.substring(split + 2);
+            // return {"main": content};
+            return {"main": cell};
+          }
+
+          p_date = date;
         }
-
-        // console.log(month + ' ' + date);
-
-        if (month == currentMonth && date == currentDate) {
-          // content = value.substring(split + 2);
-          // return {"main": content};
-          return {"main": cell};
-        }
-
-        p_date = date;
       }
     }
   }

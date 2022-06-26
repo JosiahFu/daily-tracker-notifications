@@ -3,7 +3,7 @@ function testRemind() {
 }
 
 function test() {
-  console.log(formatEventsAsEmail(getEvents(0, 23, trackerSpreadsheet), false));
+  console.log(parseMainCalendar(trackerSpreadsheet, 4, 30));
 }
 
 function remindMorning() {
