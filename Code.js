@@ -112,12 +112,8 @@ function formatTrackerEvents(contents, isCopy) {
 
   let mainCalendar = contents.shift();
   if (mainCalendar != null) {  
-    htmlFormat(categoryNames[0], mainCalendar);
-    emtpy = false;
-  }
-
-  if (empty) {
-    return null;
+    contentFormatted += htmlFormat(categoryNames[0], mainCalendar);
+    empty = false;
   }
   
   for (let i = 0; i < contents.length; i++) {
@@ -127,7 +123,9 @@ function formatTrackerEvents(contents, isCopy) {
     }
   }
 
-
+  if (empty) {
+    return null;
+  }
 
   contentFormatted +=
     "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
