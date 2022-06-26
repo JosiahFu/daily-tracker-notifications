@@ -1,0 +1,180 @@
+/**
+ * @OnlyCurrentDoc
+ */
+
+/*<style>.container {display: flex; flex-wrap: wrap;} .child {flex-grow: 1; width: 300px; margin: 10px; background-color: gainsboro; padding: 10px;} h3 {font-size: 1.3em;}</style>*/
+
+// Constants
+
+const date_now = new Date();
+date_now.setDate(date_now.getDate()+1);
+
+const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\""
+
+const monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+
+const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", "Spanish 2", "Spanish 2 Native", "PBS", "World History"];
+
+// Main
+
+function getEvents(month, date, spreadsheet) {
+  let mainCalendar = spreadsheet.getSheets()[0];
+  let sheets = spreadsheet.getSheets().slice(2,9);
+
+  // let mainContents = ;
+  let allSheetContents = [parseMainCalendar(mainCalendar, month, date)]
+
+  // console.log(output);
+
+  for (let i of sheets) {
+    let sheetContentArray = parseSubjectCalendar(i, month, date);
+    console.log(sheetContentArray)
+    
+    allSheetContents.push(sheetContentArray);
+  }
+
+  // if (content.trim().length > 0) {
+  // for (let i of )
+  console.log(allSheetContents);
+
+  let output = []
+  for (let category of allSheetContents) {
+    let categoryArray = []
+    for (let section of category) {
+      let sectionContentsArray = section.match(/[^\r\n]+/g); // Split by lines
+      
+      if (sectionContentsArray == null) {
+        categoryArray.push([section.trim()]);
+      } else {
+        // sectionContentsArray = trimArray(sectionContentsArray);
+        for (let k = 0; k < sectionContentsArray.lengh; k++) sectionContentsArray[k] = sectionContentsArray[k].trim()
+        categoryArray.push(sectionContentsArray);
+      }    
+    }
+    
+    if (categoryArray.length == 1) {
+      if (categoryArray[0][0].length == 0) {
+        output.push(null);
+      } else {
+        output.push(categoryArray);
+      }
+    } else if(categoryArray.length == 2) {
+      if (categoryArray[0][0].length == 0 && categoryArray[1][0].length == 0) {
+        output.push(null);
+      } else {
+        output.push(categoryArray);
+      }
+    } else {
+      output.push(null);
+    }
+  }
+  
+  return output;
+}
+
+function sendRemindEmail(recipient, spreadsheet) {
+  let contents = getEvents(date_now.getMonth(), date_now.getDate(), spreadsheet);
+  // console.log(contents);
+  let contentFormatted = formatTrackerEvents(contents);
+
+  GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_now.getMonth()] + " " + date_now.getDate(), "", {htmlBody: contentFormatted});
+}
+
+function formatTrackerEvents(contents) {
+    // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
+  // let contentRaw = ""
+
+  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + "</h1><p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p><div style=\"width:100%;\">" +
+    htmlFormat(categoryNames[0], contents.shift());
+  
+  for (let i = 0; i < contents.length; i++) {
+    if (contents[i] != null) {
+      contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work"], contents[i]);
+    }
+  }
+
+  contentFormatted +=
+    "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
+    "<p>This update was sent automatically based on the daily tracker. If something looks wrong, <a href=\"mailto:josiah_fu@student.davincischools.org\">let the developer know</a>!</p>";
+  
+  return contentFormatted;
+}
+
+function parseMainCalendar(sheet, currentMonth, currentDate) {
+  let range = sheet.getRange("B4:F")
+  let p_date;
+  let month = 7; // calendar begins in August
+
+  for (let row = 0; row < range.getHeight(); row++) {
+    for (let column = 0; column < range.getWidth(); column++) {
+      let cell = range.getCell(row+1, column+1);
+
+      let value = cell.getValue().toString();
+
+      let split = value.indexOf('|')
+
+      let dateString = value.substring(0, split - 1);
+      let date = parseInt(dateString);
+      // let date = 0;
+
+      if (!isNaN(date)) {
+        if (p_date > date) {
+          month = (month + 1) % 12;
+        }
+
+        // console.log(month + ' ' + date);
+
+        if(month == currentMonth && date == currentDate) {
+          content = value.substring(split + 2);
+          return [content];
+        }
+        
+        p_date = date;
+      }
+    }
+  }
+  return [];
+}
+
+function parseSubjectCalendar(sheet, currentMonth, currentDate) {
+  let range = sheet.getRange("C4:E");
+
+  for (let row = 0; row < range.getHeight(); row++) {
+    dateString = range.getCell(row+1,1).getDisplayValue().toString();
+    dates = dateString.split(',');
+    for (let i = 0; i < dates.length; i++) dates[i] = dates[i].trim();
+    if (dates.includes((currentMonth+1)+"/"+currentDate)){
+      return [range.getCell(row+1,2).getValue(), range.getCell(row+1,3).getValue()];
+    }
+  }
+  return [];
+}
+
+// utils
+
+function trimArray(array) {
+  for (let i = 0; i < array.length; i++) if (array[i].trim().length == 0) array.splice(i,i);
+  return array;
+}
+
+function htmlFormat(title, content) {
+  if (content == null) {
+    return "";
+  }
+  return (
+    "<div " + flexChildStyle + "><h2>" + title + "</h2>" +
+    "<ul><li>"+content.join("</li><li>")+"</li></ul></div>"
+  );
+}
+
+function htmlFormat2(title, subtitles, contents) {
+  let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
+  for (let i = 0; i < contents.length; i++) {
+    if (contents[i][0] != '') {
+      output += "<h3>" + subtitles[i] + "</h3>" +
+        "<ul><li>"+contents[i].join("</li><li>")+"</li></ul>"
+    }
+  }
+  output += "</div>";
+  return output;
+}
