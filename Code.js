@@ -3,7 +3,8 @@
 // Constants
 
 const date_tomorrow = new Date();
-date_tomorrow.setDate(date_tomorrow.getDate()+1);
+// REVERT THIS
+date_tomorrow.setDate(date_tomorrow.getDate()/*+1*/);
 
 const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\""
 
@@ -39,7 +40,7 @@ function getEvents(month, date, spreadsheet) {
   let sheets = spreadsheet.getSheets().slice(2,9);
 
   // let mainContents = ;
-  let allSheetContents = [parseMainCalendar(mainCalendar, month, date)]
+  let allSheetContents = [parseMainCalendar(mainCalendar, month, date)];
 
   // console.log(output);
 
@@ -56,28 +57,28 @@ function getEvents(month, date, spreadsheet) {
 
   let output = []
   for (let category of allSheetContents) {
-    let categoryArray = []
-    for (let section of category) {
-      let sectionContentsArray = section.match(/[^\r\n]+/g); // Split by lines
+    let categoryDictionary = {};
+    for (let section of Object.keys(category)) {
+      let sectionContentsArray = category[section].match(/[^\r\n]+/g); // Split by lines
       
       if (sectionContentsArray == null) {
-        categoryArray.push([section.trim()]);
+        categoryDictionary[section] = [category[section].trim()];
       } else {
         // sectionContentsArray = trimArray(sectionContentsArray);
         for (let k = 0; k < sectionContentsArray.lengh; k++) sectionContentsArray[k] = sectionContentsArray[k].trim()
-        categoryArray.push(sectionContentsArray);
+        categoryDictionary[section] = sectionContentsArray;
       }    
     }
 
     let empty = true;
-    for (let i of categoryArray)
-      if (i[0].length > 0)
+    for (let i of Object.keys(categoryDictionary))
+      if (categoryDictionary[i][0].length > 0)
         empty = false;
 
     if (empty)
       output.push(null);
     else
-      output.push(categoryArray);
+      output.push(categoryDictionary);
   }
 
   console.log(output);
@@ -110,12 +111,12 @@ function formatTrackerEvents(contents, isCopy) {
 
   let mainCalendar = contents.shift();
   if (mainCalendar != null) {  
-    contentFormatted += htmlFormat(categoryNames[0], mainCalendar[0]);
+    contentFormatted += htmlFormat(categoryNames[0], mainCalendar["main"]);
     empty = false;
   }
   
   for (let i = 0; i < contents.length; i++) {
-    contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work", "Resources/Notes"], contents[i]);
+    contentFormatted += htmlFormat2(categoryNames[i+1], contents[i]);
     if (contents[i] != null) {
       empty = false;
     }
@@ -159,28 +160,34 @@ function parseMainCalendar(sheet, currentMonth, currentDate) {
 
         if(month == currentMonth && date == currentDate) {
           content = value.substring(split + 2);
-          return [content];
+          return {"main":content};
         }
         
         p_date = date;
       }
     }
   }
-  return [];
+  return {};
 }
 
 function parseSubjectCalendar(sheet, currentMonth, currentDate) {
+  let headers = sheet.getRange("C3:F3");
   let range = sheet.getRange("C4:F");
+
+  let output = {};
 
   for (let row = 0; row < range.getHeight(); row++) {
     dateString = range.getCell(row+1,1).getDisplayValue().toString();
-    dates = dateString.split(',');
+    let dates = dateString.split(',');
     for (let i = 0; i < dates.length; i++) dates[i] = dates[i].trim();
     if (dates.includes((currentMonth+1)+"/"+currentDate)){
-      return [range.getCell(row+1,2).getValue(), range.getCell(row+1,3).getValue(), range.getCell(row+1,4).getValue()];
+      output[headers.getCell(1,2).getValue()] = range.getCell(row+1,2).getValue();
+      output[headers.getCell(1,3).getValue()] = range.getCell(row+1,3).getValue();
+      output[headers.getCell(1,4).getValue()] = range.getCell(row+1,4).getValue();
+      return output;
     }
   }
-  return [];
+  return {};
 }
 
 // utils
@@ -202,14 +209,14 @@ function htmlFormat(title, content) {
   return output;
 }
 
-function htmlFormat2(title, subtitles, contents) {
+function htmlFormat2(title, contents) {
   let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
   if (contents == null) {
     output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
   } else {
-    for (let i = 0; i < contents.length; i++) {
+    for (let i of Object.keys(contents)) {
       if (contents[i][0] != '') {
-        output += "<h3>" + subtitles[i] + "</h3>" +
+        output += "<h3>" + i + "</h3>" +
           "<ul><li>"+contents[i].join("</li><li>")+"</li></ul>"
       }
     }
