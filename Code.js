@@ -11,15 +11,20 @@ const monthNames = [ "January", "February", "March", "April", "May", "June", "Ju
 
 const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", "Spanish 2", "Spanish 2 Native", "PBS", "World History"];
 
+const trackerSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569");
+
 // Deployment
 
 function remind() {
-  sendRemindEmail("10th-daily-tracker-list@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
-  testRemind();
+  sendRemindEmail("10th-daily-tracker-list@student.davincischools.org,josiah_fu@student.davincischools.org", trackerSpreadsheet);
 }
 
 function testRemind() {
-  sendRemindEmail("josiah_fu@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
+  sendRemindEmail("josiah_fu@student.davincischools.org", trackerSpreadsheet);
+}
+
+function test() {
+  getEvents(0,24,trackerSpreadsheet);
 }
 
 // Main
