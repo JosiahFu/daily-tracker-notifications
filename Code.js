@@ -24,7 +24,7 @@ function testRemind() {
 }
 
 function test() {
-  getEvents(0,24,trackerSpreadsheet);
+  console.log(formatTrackerEvents(getEvents(0,23,trackerSpreadsheet),false));
 }
 
 // Main
@@ -81,6 +81,8 @@ function getEvents(month, date, spreadsheet) {
       output.push(null);
     }
   }
+
+  console.log(output);
   
   return output;
 }
@@ -94,26 +96,43 @@ function sendRemindEmail(recipient, spreadsheet, isCopy) {
   // console.log(contents);
   let contentFormatted = formatTrackerEvents(contents, isCopy);
 
-  GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", {htmlBody: contentFormatted});
+  if (contentFormatted == null) {
+    console.log("No events were found");
+  } else {
+    GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", {htmlBody: contentFormatted});
+  }
 }
 
 function formatTrackerEvents(contents, isCopy) {
     // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
   // let contentRaw = ""
+  let empty = true;
 
-  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<div style=\"width:100%;\">" +
-    htmlFormat(categoryNames[0], contents.shift());
+  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<div style=\"width:100%;\">";
+
+  let mainCalendar = contents.shift();
+  if (mainCalendar != null) {  
+    htmlFormat(categoryNames[0], mainCalendar);
+    emtpy = false;
+  }
+
+  if (empty) {
+    return null;
+  }
   
   for (let i = 0; i < contents.length; i++) {
     if (contents[i] != null) {
       contentFormatted += htmlFormat2(categoryNames[i+1], ["Agenda", "Pre-Work"], contents[i]);
+      empty = false;
     }
   }
+
+
 
   contentFormatted +=
     "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
     "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>";
-  
+
   return contentFormatted;
 }
 
