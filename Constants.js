@@ -11,6 +11,12 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 const trackerSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569");
 
 style = `
+/*@import url('https://fonts.googleapis.com/css2?family=Asap+Condensed&display=swap');
+
+body {
+    font-family: 'Asap Condensed', sans-serif;
+}*/
+
 .missing {
     color: gray;
 }
@@ -32,5 +38,17 @@ style = `
     box-sizing: border-box;
     display: inline-block;
     border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.link {
+    display: none;
 }
 `
