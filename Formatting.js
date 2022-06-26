@@ -3,6 +3,14 @@
 //   return array;
 // }
 
+/**
+ * @param contents {Object<string,Object<string,SpreadsheetApp.Range>>}
+ * @param url {string}
+ * @param grade {number}
+ * @param date {Date}
+ * 
+ * @returns {string} HTML Document
+ */
 function formatEventsAsEmail(contents, url, grade, date) {
   let hasContent = false;
 
@@ -35,6 +43,13 @@ function formatEventsAsEmail(contents, url, grade, date) {
   return contentFormatted;
 }
 
+/**
+ * @param title {string}
+ * @param contents {Object<string,SpreadsheetApp.Range>}
+ * @param isMain {boolean}
+ * 
+ * @returns {string}
+ */
 function htmlFormatSubject(title, contents, isMain) {
   let output = "<div class=\"block\"><h2>" + title + "</h2>";
   
@@ -55,6 +70,11 @@ function htmlFormatSubject(title, contents, isMain) {
   return output;
 }
 
+/**
+ * @param cell {SpreadsheetApp.Range}
+ * 
+ * @returns {string}
+ */
 function richTextToHTML(cell) {
   let runs = cell.getRichTextValue().getRuns();
   let output = "";

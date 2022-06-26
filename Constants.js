@@ -15,6 +15,18 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 
 const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1cn8dF4paE3l77010T0-aaAVNn14uW40RU8hwWL4N1_Y/edit");
 
+/**
+ * @typedef {Symbol} DateFormat
+ */
+
+
+/**
+ * @enum
+ * 
+ * @property {DateFormat} date
+ * @property {DateFormat} week_block
+ * @property {DateFormat} week_day
+ */
 const dateFormat = {
   date: Symbol(),
   week_block: Symbol(),
@@ -22,6 +34,15 @@ const dateFormat = {
 }
 
 class CalendarSheet {
+  /**
+   * @constructor
+   * 
+   * @param {string} name the name of the {@link SpreadsheetApp.Sheet}
+   * @param {number} headerRows integer
+   * @param {number} [dateColumn] integers
+   * @param {DateFormat} [dateFormat]
+   * @param {number[]} [infoColumns] integers
+   */
   constructor(name, headerRows, dateColumn = null, dateFormat = null, infoColumns = null) {
     this.name = name;
     this.headerRows = headerRows;
@@ -30,6 +51,11 @@ class CalendarSheet {
     this.infoColumns = infoColumns;
   }
 
+  /**
+   * Called by the {@link TrackerSpreadsheet} containing it to set the sheet object
+   * 
+   * @param spreadsheet the {@link SpreadsheetApp.Spreadsheet} that contains this sheet
+   */
   findSheet(spreadsheet) {
     this.sheet = spreadsheet.getSheetByName(this.name);
     if (this.sheet == null) {
@@ -39,6 +65,13 @@ class CalendarSheet {
 }
 
 class TrackerSpreadsheet {
+  /**
+   * @constructor
+   * 
+   * @param {string} url The url of the spreadsheet
+   * @param {CalendarSheet} main The {@link CalendarSheet} containing information about the main calendar
+   * @param {CalendarSheet} subjects The {@link CalendarSheet}s containing information about the subject calendars
+   */
   constructor(url, main, ...subjects) {
     this.spreadsheet = SpreadsheetApp.openByUrl(url);
     if (this.spreadsheet == null) {
@@ -48,6 +81,9 @@ class TrackerSpreadsheet {
     this.subjects = subjects;
   }
 
+  /**
+   * @deprecated
+   */
   findSheets() {
     this.main.findSheet(this.spreadsheet);
     for (let i of this.subjects)

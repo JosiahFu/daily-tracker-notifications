@@ -1,5 +1,13 @@
 let weekNum;
 
+/**
+ * Gets all the events from a tracker spreadsheet on a certain date.
+ * 
+ * @param date {Date}
+ * @param trackerSpreadsheet {SpreadsheetApp.Spreadsheet}
+ * 
+ * @returns {Object.<string, Object.<string, SpreadsheetApp.Range>>}
+ */
 function getEvents(date, trackerSpreadsheet) {
   console.log("Collecting events on " + (date.getMonth() + 1) + "/" + date.getDate() + " from " + trackerSpreadsheet.spreadsheet.getName());
 
@@ -17,6 +25,12 @@ function getEvents(date, trackerSpreadsheet) {
   return allSheetContents;
 }
 
+/**
+ * @param calendarSheet {SpreadsheetApp.Sheet}
+ * @param date {Date}
+ * 
+ * @returns {{main: SpreadsheetApp.Range}}
+ */
 function parseMainCalendar(calendarSheet, date) {
   console.log("| Searching main calendar");
   let range = calendarSheet.sheet.getRange(calendarSheet.headerRows + 1, 1, calendarSheet.sheet.getLastRow() - calendarSheet.headerRows - 1, 6);
@@ -61,6 +75,12 @@ function parseMainCalendar(calendarSheet, date) {
   return {};
 }
 
+/**
+ * @param calendarSheet {SpreadsheetApp.Sheet}
+ * @param date {Date}
+ * 
+ * @returns {Object.<string, SpreadsheetApp.Range>}
+ */
 function parseSubjectCalendar(calendarSheet, date) {
   console.log("| Searching " + calendarSheet.name);
   let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRows -1;
@@ -125,6 +145,14 @@ function parseSubjectCalendar(calendarSheet, date) {
   return {};
 }
 
+/**
+ * @param grade {number} An integer between 9 and 12
+ * @param day {string} `'today'` or `'tomorrow'`
+ * @param time {string} `'midnight'`, `'morning'`, `'noon'`, `'afternoon'`, or `'evening'`
+ * 
+ * @returns {string} A comma-separated list of recipients, ready to be
+ * put into MailApp.sendEmail
+ */
 function getRecipients(grade, day, time) {
   let timeColumn = timeColumns[time];
   let sheet = timeSheets[day][grade];
@@ -141,6 +169,9 @@ function getRecipients(grade, day, time) {
   return recipients.join(",");
 }
 
+/**
+ * @deprecated This has not been implemented yet
+ */
 function dateMatches(calendarSheet, row, month, date) {
   
 }
