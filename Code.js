@@ -199,16 +199,17 @@ function htmlFormat(title, content) {
 
 function htmlFormat2(title, contents) {
   let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
-  if (Object.keys(contents).length == 0) {
-    output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
-  } else {
-    for (let i of Object.keys(contents)) {
-      if (contents[i] != '') {
-        output += "<h3>" + i + "</h3>" +
-          "<ul><li>" + contents[i].join("</li><li>") + "</li></ul>"
-      }
+  
+  let hasContent = false;
+  for (let i of Object.keys(contents)) {
+    if (contents[i] != '') {
+      output += "<h3>" + i + "</h3>" +
+        "<ul><li>" + contents[i].join("</li><li>") + "</li></ul>"
+      hasContent = true;
     }
   }
+  if (!hasContent)
+      output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
   output += "</div>";
-  return output; // TODO: Add "none"
+  return output;
 }
