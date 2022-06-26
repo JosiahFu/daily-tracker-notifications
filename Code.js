@@ -6,8 +6,8 @@
 
 // Constants
 
-const date_now = new Date();
-date_now.setDate(date_now.getDate()+1);
+const date_tomorrow = new Date();
+date_tomorrow.setDate(date_tomorrow.getDate()+1);
 
 const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\""
 
@@ -15,9 +15,20 @@ const monthNames = [ "January", "February", "March", "April", "May", "June", "Ju
 
 const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", "Spanish 2", "Spanish 2 Native", "PBS", "World History"];
 
+// Deployment
+
+function remind() {
+  ReminderMaster.sendRemindEmail("10th-daily-tracker-list@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
+}
+
+function testRemind() {
+  ReminderMaster.sendRemindEmail("josiah_fu@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
+}
+
 // Main
 
 function getEvents(month, date, spreadsheet) {
+  console.log("Collecting events on "+(month+1)+"/"+date);
   let mainCalendar = spreadsheet.getSheets()[0];
   let sheets = spreadsheet.getSheets().slice(2,9);
 
@@ -77,18 +88,18 @@ function sendRemindEmail(recipient, spreadsheet) {
 }
 
 function sendRemindEmail(recipient, spreadsheet, isCopy) {
-  let contents = getEvents(date_now.getMonth(), date_now.getDate(), spreadsheet);
+  let contents = getEvents(date_tomorrow.getMonth(), date_tomorrow.getDate(), spreadsheet);
   // console.log(contents);
   let contentFormatted = formatTrackerEvents(contents, isCopy);
 
-  GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_now.getMonth()] + " " + date_now.getDate(), "", {htmlBody: contentFormatted});
+  GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", {htmlBody: contentFormatted});
 }
 
 function formatTrackerEvents(contents, isCopy) {
     // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
   // let contentRaw = ""
 
-  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<div style=\"width:100%;\">" +
+  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<div style=\"width:100%;\">" +
     htmlFormat(categoryNames[0], contents.shift());
   
   for (let i = 0; i < contents.length; i++) {
@@ -99,7 +110,7 @@ function formatTrackerEvents(contents, isCopy) {
 
   contentFormatted +=
     "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
-    "<p>This update was sent automatically based on the daily tracker. If something looks wrong, <a href=\"mailto:josiah_fu@student.davincischools.org\">let the developer know</a>!</p>";
+    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a>!</p>";
   
   return contentFormatted;
 }
