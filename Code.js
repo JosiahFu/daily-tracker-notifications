@@ -1,7 +1,3 @@
-/**
- * @OnlyCurrentDoc
- */
-
 /*<style>.container {display: flex; flex-wrap: wrap;} .child {flex-grow: 1; width: 300px; margin: 10px; background-color: gainsboro; padding: 10px;} h3 {font-size: 1.3em;}</style>*/
 
 // Constants
@@ -18,11 +14,12 @@ const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", 
 // Deployment
 
 function remind() {
-  ReminderMaster.sendRemindEmail("10th-daily-tracker-list@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
+  sendRemindEmail("10th-daily-tracker-list@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
+  testRemind();
 }
 
 function testRemind() {
-  ReminderMaster.sendRemindEmail("josiah_fu@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
+  sendRemindEmail("josiah_fu@student.davincischools.org", SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569"));
 }
 
 // Main
@@ -110,7 +107,7 @@ function formatTrackerEvents(contents, isCopy) {
 
   contentFormatted +=
     "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
-    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a>!</p>";
+    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>";
   
   return contentFormatted;
 }
