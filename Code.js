@@ -15,8 +15,12 @@ const trackerSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spr
 
 // Deployment
 
-function remind() {
-  sendRemindEmail("10th-daily-tracker-list@student.davincischools.org,josiah_fu@student.davincischools.org", trackerSpreadsheet);
+function remindMorning() {
+  sendRemindEmail("10th-daily-tracker-list-morning@student.davincischools.org,josiah_fu@student.davincischools.org", trackerSpreadsheet);
+}
+
+function remindEvening() {
+  sendRemindEmail("10th-daily-tracker-list-evening@student.davincischools.org,josiah_fu@student.davincischools.org", trackerSpreadsheet);
 }
 
 function testRemind() {
