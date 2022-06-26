@@ -1,39 +1,3 @@
-/*<style>.container {display: flex; flex-wrap: wrap;} .child {flex-grow: 1; width: 300px; margin: 10px; background-color: gainsboro; padding: 10px;} h3 {font-size: 1.3em;}</style>*/
-
-// Constants
-
-const date_today = new Date();
-const date_tomorrow = new Date();
-date_tomorrow.setDate(date_today.getDate()+1);
-
-const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\"";
-
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-// const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", "Spanish 2", "Spanish 2 Native", "PBS", "World History"];
-
-const trackerSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit#gid=1140462569");
-
-// Deployment
-
-function testRemind() {
-  sendRemindEmail("josiah_fu@student.davincischools.org", null, trackerSpreadsheet);
-}
-
-function test() {
-  console.log(formatEventsAsEmail(getEvents(0, 23, trackerSpreadsheet), false));
-}
-
-function remindMorning() {
-  sendRemindEmail("10th-daily-tracker-list-morning@student.davincischools.org","josiah_fu@student.davincischools.org", trackerSpreadsheet);
-}
-
-function remindEvening() {
-  sendRemindEmail("10th-daily-tracker-list-evening@student.davincischools.org","josiah_fu@student.davincischools.org", trackerSpreadsheet);
-}
-
-// Main
-
 function getEvents(month, date, spreadsheet) {
   console.log("Collecting events on " + (month + 1) + "/" + date);
   let mainCalendar = spreadsheet.getSheets()[0];
@@ -85,10 +49,12 @@ function sendRemindEmail(recipient, bccRecipient, spreadsheet) {
   // console.log(contents);
   let contentFormatted = formatEventsAsEmail(contents);
 
+  console.log(contentFormatted);
+
   if (contentFormatted == null) {
     console.log("No events were found");
   } else {
-    MailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_today.getMonth()] + " " + date_today.getDate(), "", { htmlBody: contentFormatted, bcc: bccRecipient });
+    MailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", { htmlBody: contentFormatted, bcc: bccRecipient });
   }
 }
 
@@ -98,9 +64,11 @@ function formatEventsAsEmail(contents) {
   let hasContent = false;
 
   let contentFormatted = 
+    "<!DOCTYPE html><html><head><style>" + style + "</style></head><body>" +
     "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" +
-    "<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">" +
-    "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>";
+    "<p>Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p>" +
+    "<p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
+    "<div class=\"container\">";
     // "<h1>Tracker Events Today</h1>";
 
   for (let i of Object.keys(contents)) {
@@ -116,9 +84,9 @@ function formatEventsAsEmail(contents) {
   }
 
   contentFormatted +=
-    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>" +
+    "</div><p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>" +
     "<p>Invite more people: <a href=\"https://groups.google.com/a/student.davincischools.org/g/10th-daily-tracker-list-morning\" target=\"_blank\">Morning Notifications</a> | <a href=\"https://groups.google.com/a/student.davincischools.org/g/10th-daily-tracker-list-evening\" target=\"_blank\">Evening Notifications</a>" +
-    "<p>Disclaimer: I cannot guarantee that every email will have up-to-date information, or that it is even sent. Sometimes code just breaks, there can be untested edge cases, or even Google could go down. It is your responsibility to know when your assignments are due. These notifications are provided as a convenience, not a replacement.</p>";
+    "<p>Disclaimer: I cannot guarantee that every email will have up-to-date information, or that it is even sent. Sometimes code just breaks, there can be untested edge cases, or even Google could go down. It is your responsibility to know when your assignments are due. These notifications are provided as a convenience, not a replacement.</p></body></html>";
 
   return contentFormatted;
 }
@@ -181,77 +149,3 @@ function parseSubjectCalendar(sheet, currentMonth, currentDate) {
 }
 
 // utils
-
-function trimArray(array) {
-  for (let i = 0; i < array.length; i++) if (array[i].trim().length == 0) array.splice(i, i);
-  return array;
-}
-
-function htmlFormat(title, contents, isMain) {
-  let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
-  
-  let hasContent = false;
-  for (let i of Object.keys(contents)) {
-    let html = richTextToHTML(contents[i])
-    if (html != null) {
-      hasContent = true;
-      output += (isMain ? '' : ("<h3>" + i + "</h3>")) + html;
-    }
-  }
-
-   if (!hasContent) {
-    output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
-  }
-
-  output += "</div>";
-  return output;
-}
-
-function richTextToHTML(cell) {
-  let runs = cell.getRichTextValue().getRuns();
-  let output = "";
-
-  if (cell.getRichTextValue().getText().trim() == "") {
-    return null;
-  }
-  
-  for (let run of runs) {
-    let style = run.getTextStyle();
-    let formattedRun = run.getText(); // Fix trailing whitespace?
-    let css = "";
-    
-    formattedRun = formattedRun.replaceAll(/\r?\n/g, "<br>");
-
-    if (style.isBold()) {
-      css += "font-weight: bold;";
-    }
-
-    if (style.isItalic()) {
-      css += "font-style: italic;";
-    }
-
-    if (style.isUnderline() && style.isStrikethrough()) {
-      css += "text-decoration: underline overline;"
-    } else if (style.isUnderline()) {
-      css += "text-decoration: underline;";
-    } else if (style.isStrikethrough()) {
-      css += "text-decoration: line-through;";
-    }
-
-    if (style.getForegroundColorObject() != null) {
-      css += "color: " + style.getForegroundColorObject().asRgbColor().asHexString() + ";";
-    }
-
-    if (css != "") {
-      formattedRun = "<span style='" + css + "'>" + formattedRun + "</span>";
-    }
-
-    if (run.getLinkUrl() != null) {
-      formattedRun = "<a href=\"" + run.getLinkUrl() + "\" target=\"_blank\">" + formattedRun + "</a>"
-    }
-
-    output += formattedRun;
-  }
-
-  return output;
-}	
