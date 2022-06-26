@@ -129,7 +129,8 @@ function formatTrackerEvents(contents, isCopy) {
 
   contentFormatted +=
     "</div><p><a href=\"https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498\" target=\"_blank\">Link to the daily tracker</a></p>" +
-    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>";
+    "<p><a href=\"mailto:josiah_fu@student.davincischools.org\">Feedback/Bug Reports</a></p>" +
+    "<p>Disclaimer: I cannot guarantee that every email will have up-to-date information, or that it is even sent. Sometimes code just breaks, there can be untested edge cases, or even Google could go down. It is your responsibility to know when your assignments are due. These notifications are provided as a convenience, not to replace the tracker.</p>";
 
   return contentFormatted;
 }
