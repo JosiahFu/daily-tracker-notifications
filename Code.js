@@ -4,11 +4,11 @@
 
 const date_tomorrow = new Date();
 // REVERT THIS
-date_tomorrow.setDate(date_tomorrow.getDate()/*+1*/);
+date_tomorrow.setDate(date_tomorrow.getDate()+2);
 
 const flexChildStyle = "style=\"display: inline-block; vertical-align: top; width: 300px; margin: 10px; background-color: whitesmoke; padding: 10px;\""
 
-const monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const categoryNames = ["Main Calendar", "Algebra 2", "Chemistry", "English 10", "Spanish 2", "Spanish 2 Native", "PBS", "World History"];
 
@@ -29,15 +29,15 @@ function testRemind() {
 }
 
 function test() {
-  console.log(formatTrackerEvents(getEvents(0,23,trackerSpreadsheet),false));
+  console.log(formatEventsAsEmail(getEvents(0, 23, trackerSpreadsheet), false));
 }
 
 // Main
 
 function getEvents(month, date, spreadsheet) {
-  console.log("Collecting events on "+(month+1)+"/"+date);
+  console.log("Collecting events on " + (month + 1) + "/" + date);
   let mainCalendar = spreadsheet.getSheets()[0];
-  let sheets = spreadsheet.getSheets().slice(2,9);
+  let sheets = spreadsheet.getSheets().slice(2, 9);
 
   // let mainContents = ;
   let allSheetContents = [parseMainCalendar(mainCalendar, month, date)];
@@ -47,7 +47,7 @@ function getEvents(month, date, spreadsheet) {
   for (let i of sheets) {
     let sheetContentArray = parseSubjectCalendar(i, month, date);
     console.log(sheetContentArray)
-    
+
     allSheetContents.push(sheetContentArray);
   }
 
@@ -60,64 +60,53 @@ function getEvents(month, date, spreadsheet) {
     let categoryDictionary = {};
     for (let section of Object.keys(category)) {
       let sectionContentsArray = category[section].match(/[^\r\n]+/g); // Split by lines
-      
+
       if (sectionContentsArray == null) {
         categoryDictionary[section] = [category[section].trim()];
       } else {
         // sectionContentsArray = trimArray(sectionContentsArray);
         for (let k = 0; k < sectionContentsArray.lengh; k++) sectionContentsArray[k] = sectionContentsArray[k].trim()
         categoryDictionary[section] = sectionContentsArray;
-      }    
+      }
     }
 
-    let empty = true;
-    for (let i of Object.keys(categoryDictionary))
-      if (categoryDictionary[i][0].length > 0)
-        empty = false;
-
-    if (empty)
-      output.push(null);
-    else
-      output.push(categoryDictionary);
+    output.push(categoryDictionary)
   }
 
   console.log(output);
-  
+
   return output;
 }
 
 function sendRemindEmail(recipient, spreadsheet) {
-  sendRemindEmail(recipient, spreadsheet, false);
-}
-
-function sendRemindEmail(recipient, spreadsheet, isCopy) {
   let contents = getEvents(date_tomorrow.getMonth(), date_tomorrow.getDate(), spreadsheet);
   // console.log(contents);
-  let contentFormatted = formatTrackerEvents(contents, isCopy);
+  let contentFormatted = formatEventsAsEmail(contents);
 
   if (contentFormatted == null) {
     console.log("No events were found");
   } else {
-    GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", {htmlBody: contentFormatted});
+    GmailApp.sendEmail(recipient, "Daily Tracker Notifications " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate(), "", { htmlBody: contentFormatted });
   }
 }
 
-function formatTrackerEvents(contents, isCopy) {
-    // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
+function formatEventsAsEmail(contents) {
+  // let contentRaw = "Tracker Events on " + monthNames[date_now.getMonth()] + " " + date_now.getDate() + ":\n"+contentArray.join("\n");
   // let contentRaw = ""
   let empty = true;
 
-  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + (isCopy ? "<p style=\"color:red; font-size:1.2em;\">Disclaimer: This is currently a beta  being tested on a copy of the tracker. Not all information will be up-to-date.</p>" : "") +"<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">";
+  let contentFormatted = "<h1>Tracker Events on " + monthNames[date_tomorrow.getMonth()] + " " + date_tomorrow.getDate() + "</h1>" + "<p>Note: Block schedule classes apply to both days, so if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p><div style=\"width:100%;\">";
 
   let mainCalendar = contents.shift();
-  if (mainCalendar != null) {  
-    contentFormatted += htmlFormat(categoryNames[0], mainCalendar["main"]);
+  if (Object.keys(mainCalendar).length > 0) {
     empty = false;
   }
-  
+  contentFormatted += htmlFormat(categoryNames[0], mainCalendar);
+
   for (let i = 0; i < contents.length; i++) {
-    contentFormatted += htmlFormat2(categoryNames[i+1], contents[i]);
-    if (contents[i] != null) {
+    contentFormatted += htmlFormat2(categoryNames[i + 1], contents[i]);
+
+    if (Object.keys(contents[i]).length > 0) {
       empty = false;
     }
   }
@@ -141,7 +130,7 @@ function parseMainCalendar(sheet, currentMonth, currentDate) {
 
   for (let row = 0; row < range.getHeight(); row++) {
     for (let column = 0; column < range.getWidth(); column++) {
-      let cell = range.getCell(row+1, column+1);
+      let cell = range.getCell(row + 1, column + 1);
 
       let value = cell.getValue().toString();
 
@@ -158,11 +147,11 @@ function parseMainCalendar(sheet, currentMonth, currentDate) {
 
         // console.log(month + ' ' + date);
 
-        if(month == currentMonth && date == currentDate) {
+        if (month == currentMonth && date == currentDate) {
           content = value.substring(split + 2);
-          return {"main":content};
+          return {"main": content};
         }
-        
+
         p_date = date;
       }
     }
@@ -177,13 +166,13 @@ function parseSubjectCalendar(sheet, currentMonth, currentDate) {
   let output = {};
 
   for (let row = 0; row < range.getHeight(); row++) {
-    dateString = range.getCell(row+1,1).getDisplayValue().toString();
+    dateString = range.getCell(row + 1, 1).getDisplayValue().toString();
     let dates = dateString.split(',');
     for (let i = 0; i < dates.length; i++) dates[i] = dates[i].trim();
-    if (dates.includes((currentMonth+1)+"/"+currentDate)){
-      output[headers.getCell(1,2).getValue()] = range.getCell(row+1,2).getValue();
-      output[headers.getCell(1,3).getValue()] = range.getCell(row+1,3).getValue();
-      output[headers.getCell(1,4).getValue()] = range.getCell(row+1,4).getValue();
+    if (dates.includes((currentMonth + 1) + "/" + currentDate)) {
+      output[headers.getCell(1, 2).getValue()] = range.getCell(row + 1, 2).getValue();
+      output[headers.getCell(1, 3).getValue()] = range.getCell(row + 1, 3).getValue();
+      output[headers.getCell(1, 4).getValue()] = range.getCell(row + 1, 4).getValue();
       return output;
     }
   }
@@ -193,16 +182,16 @@ function parseSubjectCalendar(sheet, currentMonth, currentDate) {
 // utils
 
 function trimArray(array) {
-  for (let i = 0; i < array.length; i++) if (array[i].trim().length == 0) array.splice(i,i);
+  for (let i = 0; i < array.length; i++) if (array[i].trim().length == 0) array.splice(i, i);
   return array;
 }
 
 function htmlFormat(title, content) {
   let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
-  if (content == null) {
+  if (Object.keys(content).length == 0) {
     output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
   } else {
-    output += "<ul><li>"+content.join("</li><li>")+"</li></ul>";
+    output += "<ul><li>" + content["main"].join("</li><li>") + "</li></ul>";
   }
   output += "</div>";
 
@@ -211,13 +200,13 @@ function htmlFormat(title, content) {
 
 function htmlFormat2(title, contents) {
   let output = "<div " + flexChildStyle + "><h2>" + title + "</h2>";
-  if (contents == null) {
+  if (Object.keys(contents).length == 0) {
     output += "<p style=\"color: gray;\"><em>No events listed</em></p>";
   } else {
     for (let i of Object.keys(contents)) {
-      if (contents[i][0] != '') {
+      if (contents[i] != '') {
         output += "<h3>" + i + "</h3>" +
-          "<ul><li>"+contents[i].join("</li><li>")+"</li></ul>"
+          "<ul><li>" + contents[i].join("</li><li>") + "</li></ul>"
       }
     }
   }
