@@ -49,5 +49,5 @@ jobs:
         run: |
           git config --global user.name 'JosiahFu'
           git config --global user.email 'josiahfu@users.noreply.github.com'
-          git commit -am "[Automated] ${{ inputs.commitMessage }}"
+          git commit -am "[GAS Editor] ${{ inputs.commitMessage }}"
           git push
