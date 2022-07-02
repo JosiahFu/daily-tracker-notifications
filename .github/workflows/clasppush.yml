@@ -39,7 +39,7 @@ jobs:
           # clientSecret written in .clasprc.json
           clientSecret: ${{ secrets.CLIENT_SECRET }}
           # scriptId written in .clasp.json
-          scriptId: ${{ secrets.SCRIPT_ID_MAIN }}
+          scriptId: ${{ secrets.SCRIPT_ID_DEV }}
           # Directory where scripts are stored
           #rootDir: 
           # Command to execute(push or deploy)
