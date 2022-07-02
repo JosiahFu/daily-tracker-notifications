@@ -21,9 +21,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Clasp Action
-        # You may pin to the exact commit or the version.
-        # uses: daikikatsuragawa/clasp-action@872008bd9f4e7f73f1094e5c4e51e2a2cb751806
-        uses: daikikatsuragawa/clasp-action@v1.1.0
+        uses: JosiahFu/clasp-action@v1.2.0
         with:
           # access_token written in .clasprc.json
           accessToken: ${{ secrets.ACCESS_TOKEN }}
