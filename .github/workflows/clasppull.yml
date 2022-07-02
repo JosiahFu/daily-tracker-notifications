@@ -20,7 +20,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Clasp Action
+      - name: Clasp Pull
         uses: JosiahFu/clasp-action@v1.2.0
         with:
           # access_token written in .clasprc.json
@@ -44,5 +44,5 @@ jobs:
         run: |
           git config --global user.name 'JosiahFu'
           git config --global user.email 'josiahfu@users.noreply.github.com'
-          git commit -am "Changes made in google script editor"
+          git commit -am "[Automated] Changes from GAS editor"
           git push
