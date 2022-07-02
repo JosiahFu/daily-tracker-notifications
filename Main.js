@@ -1,5 +1,3 @@
-// Testing changes
-
 function testRemind() {
   sendRemindEmail("josiah_fu@student.davincischools.org", 10, date_today);
 }
