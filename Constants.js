@@ -17,6 +17,8 @@ const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spread
 
 const dateFormat = {
   date: Symbol(),
+  date_range: Symbol(),
+  week: Symbol(),
   week_block: Symbol(),
   week_day: Symbol()
 }

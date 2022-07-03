@@ -32,7 +32,15 @@ const trackerSpreadsheetsData = {
     new CalendarSheet("PBS", 3, 3, dateFormat.date, [4,5,6]),
     new CalendarSheet("World History", 3, 3, dateFormat.date, [4,5,6]),
   ),
-  11: SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit"),
+  11: new TrackerSpreadsheet(
+    "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
+    new CalendarSheet("11th Grade Calendar", 3),
+    new CalendarSheet("English 11", 3, 1, dateFormat.week, [3,4,5]).overrideHeaderRow(5),
+    new CalendarSheet("US History", 6, 2, dateFormat.date_range, [3,4,5,6]),
+    new CalendarSheet("Spanish 3", 4, 1, dateFormat.week_block, [3,4,5]),
+    new CalendarSheet("Spanish 4", 4, 1, dateFormat.date_range, [3,4,5]),
+    new CalendarSheet("Biology", 4,  )
+  ),
   12: SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit")
 };
 
