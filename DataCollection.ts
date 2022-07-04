@@ -4,7 +4,7 @@ function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): Object<s
   console.log("Collecting events on " + (date.getMonth() + 1) + "/" + date.getDate() + " from " + trackerSpreadsheet.spreadsheet.getName());
 
   let allSheetContents = {}
-  allSheetContents[trackerSpreadsheet.main.name] = parseMainCalendar(trackerSpreadsheet.main, date);
+  allSheetContents[trackerSpreadsheet.mainName] = parseMainCalendar(trackerSpreadsheet.mainSheet, trackerSpreadsheet.mainHeaderRows, date);
 
   for (let i of trackerSpreadsheet.subjects) {
     let sheetContentArray = parseSubjectCalendar(i, date);
@@ -17,9 +17,9 @@ function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): Object<s
   return allSheetContents;
 }
 
-function parseMainCalendar(calendarSheet: CalendarSheet, date: Date): Object<string, SpreadsheetApp.Range> {
+function parseMainCalendar(sheet: SpreadsheetApp.Sheet, headerRows: number, date: Date): Object<string, SpreadsheetApp.Range> {
   console.log("| Searching main calendar");
-  let range = calendarSheet.sheet.getRange(calendarSheet.headerRows + 1, 1, calendarSheet.sheet.getLastRow() - calendarSheet.headerRows - 1, 6);
+  let range = sheet.getRange(headerRows + 1, 1, sheet.getLastRow() - headerRows - 1, 6);
   let p_date: number;
   let month = mainCalendarStartMonth;
 

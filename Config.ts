@@ -11,7 +11,7 @@ const blocks = {
 const trackerSpreadsheetsData = {
   9: new TrackerSpreadsheet(
     "https://docs.google.com/spreadsheets/d/1gzBwpcPMiQvwZeOro2FTUrKnGwoRHP0ixdtyEH85eOg/edit",
-    new CalendarSheet("9th Grade Calendar", 4),
+    "9th Grade Calendar", 4,
     new CalendarSheet("Pre-Alg/Alg1 (Gamboa)", 3, 2, DateFormat.date, [4,5,6]), 
     new CalendarSheet("IED", 3, 3, DateFormat.date, [4,5,6]),
     new CalendarSheet("Physics", 3, 1, DateFormat.week_block, [3,4,5]),
@@ -23,7 +23,7 @@ const trackerSpreadsheetsData = {
   ),
   10: new TrackerSpreadsheet(
     "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
-    new CalendarSheet("10th Grade Calendar", 3),
+    "10th Grade Calendar", 3,
     new CalendarSheet("Algebra 2", 3, 3, DateFormat.date, [4,5,6]),
     new CalendarSheet("Chemistry", 3, 3, DateFormat.date, [4,5,6]),
     new CalendarSheet("English 10", 3, 3, DateFormat.date, [4,5,6]),

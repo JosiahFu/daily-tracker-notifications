@@ -24,7 +24,7 @@ class DateFormat {
 }
 
 class CalendarSheet {
-  constructor(name: string, headerRows: number, dateColumn?: number, dateFormat?: DateFormat, infoColumns?: number[]) {
+  constructor(name: string, headerRows: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
     this.name = name;
     this.headerRows = headerRows;
     this.dateColumn = dateColumn;
@@ -41,17 +41,21 @@ class CalendarSheet {
 }
 
 class TrackerSpreadsheet {
-  constructor(url: string, main: CalendarSheet, ...subjects: CalendarSheet[]) {
+  constructor(url: string, mainName: string, mainHeaderRows, ...subjects: CalendarSheet[]) {
     this.spreadsheet = SpreadsheetApp.openByUrl(url);
     if (this.spreadsheet == null) {
       throw "Could not find spreadsheet (which contains \"" + main.name + "\"), check URL";
     }
-    this.main = main;
+    this.mainName = mainName;
+    this.mainSheet = spreadsheet.getSheetByName(mainName);
+    if (this.mainSheet == null) {
+      throw "Could not find sheet \"" + mainName + "\", check name spelling";
+    }
+    this.mainHeaderRows = mainHeaderRows;
     this.subjects = subjects;
   }
 
   findSheets(): void {
-    this.main.findSheet(this.spreadsheet);
     for (let i of this.subjects)
       i.findSheet(this.spreadsheet);
   }
