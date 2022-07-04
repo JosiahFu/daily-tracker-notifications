@@ -15,14 +15,16 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 
 const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1cn8dF4paE3l77010T0-aaAVNn14uW40RU8hwWL4N1_Y/edit");
 
-const dateFormat = {
-  date: Symbol(),
-  week_block: Symbol(),
-  week_day: Symbol()
+class DateFormat {
+  static date = new this();
+  static week_block = new this();
+  static week_day = new this();
+
+  constructor() {}
 }
 
 class CalendarSheet {
-  constructor(name, headerRows, dateColumn = null, dateFormat = null, infoColumns = null) {
+  constructor(name: string, headerRows: number, dateColumn?: number, dateFormat?: DateFormat, infoColumns?: number[]) {
     this.name = name;
     this.headerRows = headerRows;
     this.dateColumn = dateColumn;
@@ -30,7 +32,7 @@ class CalendarSheet {
     this.infoColumns = infoColumns;
   }
 
-  findSheet(spreadsheet) {
+  findSheet(spreadsheet: SpreadsheetApp.Spreadsheet): void {
     this.sheet = spreadsheet.getSheetByName(this.name);
     if (this.sheet == null) {
       throw "Could not find sheet \"" + this.name + "\", check name spelling";
@@ -39,7 +41,7 @@ class CalendarSheet {
 }
 
 class TrackerSpreadsheet {
-  constructor(url, main, ...subjects) {
+  constructor(url: string, main: CalendarSheet, ...subjects: CalendarSheet[]) {
     this.spreadsheet = SpreadsheetApp.openByUrl(url);
     if (this.spreadsheet == null) {
       throw "Could not find spreadsheet (which contains \"" + main.name + "\"), check URL";
@@ -48,7 +50,7 @@ class TrackerSpreadsheet {
     this.subjects = subjects;
   }
 
-  findSheets() {
+  findSheets(): void {
     this.main.findSheet(this.spreadsheet);
     for (let i of this.subjects)
       i.findSheet(this.spreadsheet);
