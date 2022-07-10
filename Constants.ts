@@ -15,13 +15,16 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 
 const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1cn8dF4paE3l77010T0-aaAVNn14uW40RU8hwWL4N1_Y/edit");
 
-class DateFormat {
-  static date = new this();
-  static week_block = new this();
-  static week_day = new this();
-
-  constructor() {}
+enum DateFormat {
+    Date = "DATE",
+    WeekBlock = "WEEK_BLOCK",
+    WeekDay = "WEEK_DAY"
 }
+
+type CalendarContents = {[key: string]: SpreadsheetApp.Range};
+type TrackerContents = {[key: string]: CalendarContents};
+
+type GradeSheetDict = {9: SpreadsheetApp.Sheet, 10: SpreadsheetApp.Sheet, 11: SpreadsheetApp.Sheet, 12: SpreadsheetApp.Sheet};
 
 class CalendarSheet {
   constructor(name: string, headerRows: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
@@ -53,21 +56,12 @@ class TrackerSpreadsheet {
     }
     this.mainHeaderRows = mainHeaderRows;
     this.subjects = subjects;
-  }
-
-  findSheets(): void {
     for (let i of this.subjects)
       i.findSheet(this.spreadsheet);
   }
 }
 
-const midnight = "midnight";
-const morning = "morning";
-const noon = "noon";
-const afternoon = "afternoon";
-const evening = "evening";
-
-const timeSheets = {
+const timeSheets: {today: GradeSheetDict, tomorrow: GradeSheetDict} = {
   today: {
     9: timeSpreadsheet.getSheetByName("Today9"),
     10: timeSpreadsheet.getSheetByName("Today10"),
@@ -82,7 +76,7 @@ const timeSheets = {
   }
 }
 
-const sheetHeight = 100;
+const signupSheetHeight = 100; 
 
 const timeColumns = {
   midnight: 1,

@@ -1,9 +1,9 @@
 let weekNum: number;
 
-function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): Object<string, Object<string,SpreadsheetApp.Range>> {
+function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): TrackerContents {
   console.log("Collecting events on " + (date.getMonth() + 1) + "/" + date.getDate() + " from " + trackerSpreadsheet.spreadsheet.getName());
 
-  let allSheetContents = {}
+  let allSheetContents: TrackerContents = {};
   allSheetContents[trackerSpreadsheet.mainName] = parseMainCalendar(trackerSpreadsheet.mainSheet, trackerSpreadsheet.mainHeaderRows, date);
 
   for (let i of trackerSpreadsheet.subjects) {
@@ -17,7 +17,7 @@ function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): Object<s
   return allSheetContents;
 }
 
-function parseMainCalendar(sheet: SpreadsheetApp.Sheet, headerRows: number, date: Date): Object<string, SpreadsheetApp.Range> {
+function parseMainCalendar(sheet: SpreadsheetApp.Sheet, headerRows: number, date: Date): {main: SpreadsheetApp.Range} {
   console.log("| Searching main calendar");
   let range = sheet.getRange(headerRows + 1, 1, sheet.getLastRow() - headerRows - 1, 6);
   let p_date: number;
@@ -61,11 +61,11 @@ function parseMainCalendar(sheet: SpreadsheetApp.Sheet, headerRows: number, date
   return {};
 }
 
-function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Object<string, SpreadsheetApp.Range> {
+function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): CalendarContents {
   console.log("| Searching " + calendarSheet.name);
   let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRows -1;
-  let headers = [];
-  let columns = [];
+  let headers: string[] = [];
+  let columns: SpreadsheetApp.Range[] = [];
   for (let i of calendarSheet.infoColumns) {
     let headerCell = calendarSheet.sheet.getRange(calendarSheet.headerRows, i);
     if (headerCell.getMergedRanges().length == 0)
@@ -75,11 +75,11 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Object<
     columns.push(calendarSheet.sheet.getRange(calendarSheet.headerRows + 1, i, infoRowsCount, 1));
   }
 
-  let output = {};
+  let output: CalendarContents = {};
   let pattern: RegExp;
 
   switch (calendarSheet.dateFormat) {
-    case DateFormat.date:
+    case DateFormat.Date:
       pattern = new RegExp("(?<!\d\d\/)0?" + (date.getMonth() + 1) + "\\/0?" + date.getDate());
 
       for (let row = calendarSheet.headerRows + 1; row <= infoRowsCount; row++) {
@@ -94,8 +94,8 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Object<
         }
       }
       break;
-    case DateFormat.week_block:
-    case DateFormat.week_day:
+    case DateFormat.Week_block:
+    case DateFormat.Week_day:
       if (date.getDay() > 0 && date.getDay() < 6) {
         pattern = /\d+/; // First sequence of digits
 
@@ -125,12 +125,11 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Object<
   return {};
 }
 
-function getRecipients(grade: number, day: string, time: string): string {
-  let timeColumn = timeColumns[time];
-  let sheet = timeSheets[day][grade];
-  let range = sheet.getRange(2,timeColumn,sheetHeight,1);
+function getRecipients(grade: number, sheets: GradeSheetDict, column: number): string {
+  let sheet = sheets[grade];
+  let range = sheet.getRange(2, column, signupSheetHeight, 1);
   let values = range.getDisplayValues();
-  let recipients = [];
+  let recipients: string[] = [];
   for (let i of values) {
     for (let j of i) {
       if (j != "") {

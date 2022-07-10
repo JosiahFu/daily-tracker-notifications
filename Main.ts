@@ -3,40 +3,40 @@ function testRemind(): void {
 }
 
 function test(): void {
-  console.log(parseSubjectCalendar(trackerSpreadsheetsData[9].subjects[0], date_today.getMonth(), date_today.getDate())); // TOTEST
+  console.log(parseSubjectCalendar(trackerSpreadsheetsData[9].subjects[0], date_today)); // TOTEST
 
 }
 
 function remindMidnight(): void {
-  sendRemindEmails(midnight)
+  sendRemindEmails(timeColumns.midnight)
 }
 
 function remindMorning(): void {
-  sendRemindEmails(morning);
+  sendRemindEmails(timeColumns.morning);
 }
 
 function remindNoon(): void {
-  sendRemindEmails(noon);
+  sendRemindEmails(timeColumns.noon);
 }
 
 function remindAfternoon(): void {
-  sendRemindEmails(afternoon);
+  sendRemindEmails(timeColumns.afternoon);
 }
 
 function remindEvening(): void {
-  sendRemindEmails(evening);
+  sendRemindEmails(timeColumns.evening);
 }
 
 
-function sendRemindEmails(time): void {
+function sendRemindEmails(column: number): void {
   for (let i of [9,10,11,12])
-    sendRemindEmail(getRecipients(i,"today",time), i, date_today);
+    sendRemindEmail(getRecipients(i, timeSheets.today, column), i, date_today);
   for (let i of [9,10,11,12])
-    sendRemindEmail(getRecipients(i,"tomorrow",time), i, date_tomorrow);
+    sendRemindEmail(getRecipients(i, timeSheets.tomorrow, column), i, date_tomorrow);
 }
 
-function sendRemindEmail(recipient, grade, date): void {
-  let trackerSpreadsheet = trackerSpreadsheetsData[grade];
+function sendRemindEmail(recipient: string, grade: number, date: Date): void {
+  let trackerSpreadsheet: TrackerSpreadsheet = trackerSpreadsheetsData[grade.toString()];
   let contents = getEvents(date, trackerSpreadsheet);
   let contentFormatted = formatEventsAsEmail(contents, trackerSpreadsheet.spreadsheet.getUrl(), grade, date);
 

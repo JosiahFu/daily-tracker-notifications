@@ -3,7 +3,7 @@
 //   return array;
 // }
 
-function formatEventsAsEmail(contents, url, grade, date) {
+function formatEventsAsEmail(contents: TrackerContents, url: string, grade: number, date: Date): string {
   let hasContent = false;
 
   let contentFormatted = 
@@ -35,7 +35,7 @@ function formatEventsAsEmail(contents, url, grade, date) {
   return contentFormatted;
 }
 
-function htmlFormatSubject(title, contents, isMain) {
+function htmlFormatSubject(title: string, contents: CalendarContents, isMain: boolean): string {
   let output = "<div class=\"block\"><h2>" + title + "</h2>";
   
   let hasContent = false;
@@ -55,7 +55,7 @@ function htmlFormatSubject(title, contents, isMain) {
   return output;
 }
 
-function richTextToHTML(cell) {
+function richTextToHTML(cell: SpreadsheetApp.Range): string {
   let runs = cell.getRichTextValue().getRuns();
   let output = "";
 
