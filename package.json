@@ -1,0 +1,19 @@
+{
+  "name": "daily-tracker-notifications",
+  "description": "A project I made for my school",
+  "version": "2.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosiahFu/daily-tracker-notifications.git"
+  },
+  "author": "Josiah Fu josiahfu@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JosiahFu/daily-tracker-notifications/issues"
+  },
+  "homepage": "https://github.com/JosiahFu/daily-tracker-notifications#readme",
+  "dependencies": {
+    "@google/clasp": "^2.4.1",
+    "@types/google-apps-script": "^1.0.51"
+  }
+}
