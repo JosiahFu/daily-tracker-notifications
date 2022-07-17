@@ -50,7 +50,7 @@ class TrackerSpreadsheet {
       throw "Could not find spreadsheet (which contains \"" + main.name + "\"), check URL";
     }
     this.mainName = mainName;
-    this.mainSheet = spreadsheet.getSheetByName(mainName);
+    this.mainSheet = this.spreadsheet.getSheetByName(mainName);
     if (this.mainSheet == null) {
       throw "Could not find sheet \"" + mainName + "\", check name spelling";
     }
