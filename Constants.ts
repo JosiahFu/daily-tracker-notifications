@@ -24,9 +24,9 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1cn8dF4paE3l77010T0-aaAVNn14uW40RU8hwWL4N1_Y/edit");
 
 enum DateFormat {
-    Date = "DATE",
-    WeekBlock = "WEEK_BLOCK",
-    WeekDay = "WEEK_DAY"
+  Date = "DATE",
+  WeekBlock = "WEEK_BLOCK",
+  WeekDay = "WEEK_DAY"
 }
 
 type CalendarContents = {[key: string]: GoogleAppsScript.Spreadsheet.Range};
@@ -90,16 +90,17 @@ const timeSheetNames: {[key in TargetDay]: GradeDict<string>} = {
   }
 };
 
-let timeSheetsBuilder: {[key in TargetDay]: GradeDict<GoogleAppsScript.Spreadsheet.Sheet>} = {today: {}, tomorrow: {}};
+let timeSheetsBuilder: {[key in TargetDay]?: Record<Grade,GoogleAppsScript.Spreadsheet.Sheet>} = {};
 for (let day in timeSheetNames) {
   let dayTyped = <TargetDay>day;
+  timeSheetsBuilder[dayTyped] = {};
   for (let grade in timeSheetNames[<TargetDay>day]) {
     let gradeTyped = parseInt(grade) as Grade;
     timeSheetsBuilder[dayTyped][gradeTyped] = checkNull(timeSpreadsheet.getSheetByName(timeSheetNames[dayTyped][gradeTyped]), "Could not find time sheet " + timeSheetNames[dayTyped][gradeTyped]);
   }
 }
 
-const timeSheets: {[key in TargetDay]: GradeDict<string>} = timeSheetsBuilder;
+const timeSheets: {[key in TargetDay]: GradeDict<GoogleAppsScript.Spreadsheet.Sheet>} = timeSheetsBuilder;
 
 const signupSheetHeight = 100; 
 

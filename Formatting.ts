@@ -3,7 +3,7 @@
 //   return array;
 // }
 
-function formatEventsAsEmail(contents: TrackerContents, url: string, grade: number, date: Date): string {
+function formatEventsAsEmail(contents: TrackerContents, url: string, grade: number, date: Date): string | null {
   let hasContent = false;
 
   let contentFormatted = 
@@ -41,7 +41,7 @@ function htmlFormatSubject(title: string, contents: CalendarContents, isMain: bo
   let hasContent = false;
   for (let i in contents) {
     let html = richTextToHTML(contents[i])
-    if (html != null) {
+    if (html != "") {
       hasContent = true;
       output += (isMain ? '' : ("<h3>" + i + "</h3>")) + html;
     }
@@ -60,7 +60,7 @@ function richTextToHTML(cell: GoogleAppsScript.Spreadsheet.Range): string {
   let output = "";
 
   if (checkNull(cell.getRichTextValue()).getText().trim() == "") {
-    return null;
+    return "";
   }
   
   for (let run of runs) {

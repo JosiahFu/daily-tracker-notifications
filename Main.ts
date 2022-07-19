@@ -30,13 +30,13 @@ function remindEvening(): void {
 
 function sendRemindEmails(column: number): void {
   for (let i of [9,10,11,12])
-    sendRemindEmail(getRecipients(i, timeSheets.today, column), i, date_today);
+    sendRemindEmail(getRecipients(i as Grade, timeSheets.today, column), i as Grade, date_today);
   for (let i of [9,10,11,12])
-    sendRemindEmail(getRecipients(i, timeSheets.tomorrow, column), i, date_tomorrow);
+    sendRemindEmail(getRecipients(i as Grade, timeSheets.tomorrow, column), i as Grade, date_tomorrow);
 }
 
-function sendRemindEmail(recipient: string, grade: number, date: Date): void {
-  let trackerSpreadsheet: TrackerSpreadsheet = trackerSpreadsheetsData[grade.toString()];
+function sendRemindEmail(recipient: string, grade: Grade, date: Date): void {
+  let trackerSpreadsheet: TrackerSpreadsheet = trackerSpreadsheetsData[grade];
   let contents = getEvents(date, trackerSpreadsheet);
   let contentFormatted = formatEventsAsEmail(contents, trackerSpreadsheet.spreadsheet.getUrl(), grade, date);
 

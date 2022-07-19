@@ -17,7 +17,7 @@ function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): TrackerC
   return allSheetContents;
 }
 
-function parseMainCalendar(sheet: GoogleAppsScript.Spreadsheet.Sheet, headerRows: number, date: Date): {main: GoogleAppsScript.Spreadsheet.Range} {
+function parseMainCalendar(sheet: GoogleAppsScript.Spreadsheet.Sheet, headerRows: number, date: Date): {main?: GoogleAppsScript.Spreadsheet.Range} {
   console.log("| Searching main calendar");
   let range = sheet.getRange(headerRows + 1, 1, sheet.getLastRow() - headerRows - 1, 6);
   let p_date = 0;
