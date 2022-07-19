@@ -90,17 +90,17 @@ const timeSheetNames: {[key in TargetDay]: GradeDict<string>} = {
   }
 };
 
-let timeSheetsBuilder: {[key in TargetDay]?: Record<Grade,GoogleAppsScript.Spreadsheet.Sheet>} = {};
+let timeSheetsBuilder: {[key in TargetDay]?: {[key in Grade]?: GoogleAppsScript.Spreadsheet.Sheet}} = {};
 for (let day in timeSheetNames) {
   let dayTyped = <TargetDay>day;
-  timeSheetsBuilder[dayTyped] = {};
+  let dayObject: {[key in Grade]?: GoogleAppsScript.Spreadsheet.Sheet} = timeSheetsBuilder[dayTyped] = {};
   for (let grade in timeSheetNames[<TargetDay>day]) {
     let gradeTyped = parseInt(grade) as Grade;
-    timeSheetsBuilder[dayTyped][gradeTyped] = checkNull(timeSpreadsheet.getSheetByName(timeSheetNames[dayTyped][gradeTyped]), "Could not find time sheet " + timeSheetNames[dayTyped][gradeTyped]);
+    dayObject[gradeTyped] = checkNull(timeSpreadsheet.getSheetByName(timeSheetNames[dayTyped][gradeTyped]), "Could not find time sheet " + timeSheetNames[dayTyped][gradeTyped]);
   }
 }
 
-const timeSheets: {[key in TargetDay]: GradeDict<GoogleAppsScript.Spreadsheet.Sheet>} = timeSheetsBuilder;
+const timeSheets = timeSheetsBuilder as {[key in TargetDay]: GradeDict<GoogleAppsScript.Spreadsheet.Sheet>};
 
 const signupSheetHeight = 100; 
 
