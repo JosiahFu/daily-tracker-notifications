@@ -94,6 +94,27 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
         }
       }
       break;
+    case DateFormat.DateRange:
+    // TODO
+      break;
+    case DateFormat.Week:
+      if (date.getDay() > 0 && date.getDay() < 6) {
+        pattern = /\d+/; // First sequence of digits
+
+        for (let row = calendarSheet.headerRows + 1; row <= infoRowsCount; row++) {
+          let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
+          let weekMatches = pattern.exec(weekString);
+
+          if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
+            for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
+              output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
+            }
+            console.log("| Found events in row with week string " + weekString);
+            return output;
+          }
+        }
+      }
+      break;
     case DateFormat.WeekBlock:
     case DateFormat.WeekDay:
       if (date.getDay() > 0 && date.getDay() < 6) {

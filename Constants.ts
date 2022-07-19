@@ -25,6 +25,8 @@ const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spread
 
 enum DateFormat {
   Date = "DATE",
+  DateRange = "DATE_RANGE",
+  Week = "WEEK",
   WeekBlock = "WEEK_BLOCK",
   WeekDay = "WEEK_DAY"
 }

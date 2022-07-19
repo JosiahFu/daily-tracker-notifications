@@ -9,7 +9,7 @@ function formatEventsAsEmail(contents: TrackerContents, url: string, grade: numb
   let contentFormatted = 
     "<!DOCTYPE html><html><head><style>" + style + "</style></head><body>" +
     "<h1>" + grade + "th Grade Tracker Events on " + monthNames[date.getMonth()] + " " + date.getDate() + "</h1>" +
-    "<p>Block schedule classes apply to both days, so for example if it says a homework is due in the Thursday announcement but you have that class Friday, it's probably due on Friday.</p>" +
+    "<p>Some events may apply to multiple days. Keep block schedule in mind.</p>" +
     "<p class=\"link\"><a href=\"" + url + "\" target=\"_blank\">Link to the daily tracker</a></p>" +
     "<div class=\"container\">";
 
