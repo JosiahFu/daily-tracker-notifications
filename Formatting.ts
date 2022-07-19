@@ -13,7 +13,7 @@ function formatEventsAsEmail(contents: TrackerContents, url: string, grade: numb
     "<p class=\"link\"><a href=\"" + url + "\" target=\"_blank\">Link to the daily tracker</a></p>" +
     "<div class=\"container\">";
 
-  for (let i of Object.keys(contents)) {
+  for (let i in contents) {
     contentFormatted += htmlFormatSubject(i, contents[i], i == Object.keys(contents)[0]);
 
     if (Object.keys(contents[i]).length > 0) {
@@ -39,7 +39,7 @@ function htmlFormatSubject(title: string, contents: CalendarContents, isMain: bo
   let output = "<div class=\"block\"><h2>" + title + "</h2>";
   
   let hasContent = false;
-  for (let i of Object.keys(contents)) {
+  for (let i in contents) {
     let html = richTextToHTML(contents[i])
     if (html != null) {
       hasContent = true;
@@ -55,11 +55,11 @@ function htmlFormatSubject(title: string, contents: CalendarContents, isMain: bo
   return output;
 }
 
-function richTextToHTML(cell: SpreadsheetApp.Range): string {
-  let runs = cell.getRichTextValue().getRuns();
+function richTextToHTML(cell: GoogleAppsScript.Spreadsheet.Range): string {
+  let runs = checkNull(cell.getRichTextValue()).getRuns();
   let output = "";
 
-  if (cell.getRichTextValue().getText().trim() == "") {
+  if (checkNull(cell.getRichTextValue()).getText().trim() == "") {
     return null;
   }
   
@@ -87,7 +87,7 @@ function richTextToHTML(cell: SpreadsheetApp.Range): string {
     }
 
     if (style.getForegroundColorObject() != null) {
-      css += "color: " + style.getForegroundColorObject().asRgbColor().asHexString() + ";";
+      css += "color: " + checkNull(style.getForegroundColorObject()).asRgbColor().asHexString() + ";";
     }
 
     if (css != "") {

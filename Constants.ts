@@ -11,6 +11,14 @@ if (_testing) {
   date_today.setFullYear(2021);
 }
 
+function checkNull<T>(value: T | null, message: string = "A library returned null where it was not supposed to"): T {
+  if (value == null) {
+    console.trace(message);
+    throw new Error(message);
+  }
+  return value;
+}
+
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const timeSpreadsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1cn8dF4paE3l77010T0-aaAVNn14uW40RU8hwWL4N1_Y/edit");
@@ -21,12 +29,21 @@ enum DateFormat {
     WeekDay = "WEEK_DAY"
 }
 
-type CalendarContents = {[key: string]: SpreadsheetApp.Range};
+type CalendarContents = {[key: string]: GoogleAppsScript.Spreadsheet.Range};
 type TrackerContents = {[key: string]: CalendarContents};
+type Grade = 9 | 10 | 11 | 12;
+type TargetDay = "today" | "tomorrow";
 
-type GradeSheetDict = {9: SpreadsheetApp.Sheet, 10: SpreadsheetApp.Sheet, 11: SpreadsheetApp.Sheet, 12: SpreadsheetApp.Sheet};
+type GradeDict<T> = {[key in Grade]: T};
 
 class CalendarSheet {
+  name: string;
+  headerRows: number;
+  dateColumn: number;
+  dateFormat: DateFormat;
+  infoColumns: number[];
+  sheet: GoogleAppsScript.Spreadsheet.Sheet;
+
   constructor(name: string, headerRows: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
     this.name = name;
     this.headerRows = headerRows;
@@ -35,25 +52,22 @@ class CalendarSheet {
     this.infoColumns = infoColumns;
   }
 
-  findSheet(spreadsheet: SpreadsheetApp.Spreadsheet): void {
-    this.sheet = spreadsheet.getSheetByName(this.name);
-    if (this.sheet == null) {
-      throw "Could not find sheet \"" + this.name + "\", check name spelling";
-    }
+  findSheet(spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet): void {
+    this.sheet = checkNull(spreadsheet.getSheetByName(this.name), "Could not find sheet \"" + this.name + "\", check name spelling");
   }
 }
 
 class TrackerSpreadsheet {
-  constructor(url: string, mainName: string, mainHeaderRows, ...subjects: CalendarSheet[]) {
-    this.spreadsheet = SpreadsheetApp.openByUrl(url);
-    if (this.spreadsheet == null) {
-      throw "Could not find spreadsheet (which contains \"" + main.name + "\"), check URL";
-    }
+  spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
+  mainName: string;
+  mainHeaderRows: number;
+  mainSheet: GoogleAppsScript.Spreadsheet.Sheet;
+  subjects: CalendarSheet[];
+
+  constructor(url: string, mainName: string, mainHeaderRows: number, ...subjects: CalendarSheet[]) {
+    this.spreadsheet = checkNull(SpreadsheetApp.openByUrl(url), "Could not find spreadsheet (which contains \"" + mainName + "\"), check URL");
     this.mainName = mainName;
-    this.mainSheet = this.spreadsheet.getSheetByName(mainName);
-    if (this.mainSheet == null) {
-      throw "Could not find sheet \"" + mainName + "\", check name spelling";
-    }
+    this.mainSheet = checkNull(this.spreadsheet.getSheetByName(mainName), "Could not find sheet \"" + mainName + "\", check name spelling");
     this.mainHeaderRows = mainHeaderRows;
     this.subjects = subjects;
     for (let i of this.subjects)
@@ -61,20 +75,31 @@ class TrackerSpreadsheet {
   }
 }
 
-const timeSheets: {today: GradeSheetDict, tomorrow: GradeSheetDict} = {
+const timeSheetNames: {[key in TargetDay]: GradeDict<string>} = {
   today: {
-    9: timeSpreadsheet.getSheetByName("Today9"),
-    10: timeSpreadsheet.getSheetByName("Today10"),
-    11: timeSpreadsheet.getSheetByName("Today11"),
-    12: timeSpreadsheet.getSheetByName("Today12")
+    9: "Today9",
+    10: "Today10",
+    11: "Today11",
+    12: "Today12"
   },
   tomorrow: {
-    9: timeSpreadsheet.getSheetByName("Tomorrow9"),
-    10: timeSpreadsheet.getSheetByName("Tomorrow10"),
-    11: timeSpreadsheet.getSheetByName("Tomorrow11"),
-    12: timeSpreadsheet.getSheetByName("Tomorrow12")
+    9: "Tomorrow9",
+    10: "Tomorrow10",
+    11: "Tomorrow11",
+    12: "Tomorrow12"
+  }
+};
+
+let timeSheetsBuilder: {[key in TargetDay]: GradeDict<GoogleAppsScript.Spreadsheet.Sheet>} = {today: {}, tomorrow: {}};
+for (let day in timeSheetNames) {
+  let dayTyped = <TargetDay>day;
+  for (let grade in timeSheetNames[<TargetDay>day]) {
+    let gradeTyped = parseInt(grade) as Grade;
+    timeSheetsBuilder[dayTyped][gradeTyped] = checkNull(timeSpreadsheet.getSheetByName(timeSheetNames[dayTyped][gradeTyped]), "Could not find time sheet " + timeSheetNames[dayTyped][gradeTyped]);
   }
 }
+
+const timeSheets: {[key in TargetDay]: GradeDict<string>} = timeSheetsBuilder;
 
 const signupSheetHeight = 100; 
 

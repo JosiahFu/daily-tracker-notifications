@@ -17,10 +17,10 @@ function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): TrackerC
   return allSheetContents;
 }
 
-function parseMainCalendar(sheet: SpreadsheetApp.Sheet, headerRows: number, date: Date): {main: SpreadsheetApp.Range} {
+function parseMainCalendar(sheet: GoogleAppsScript.Spreadsheet.Sheet, headerRows: number, date: Date): {main: GoogleAppsScript.Spreadsheet.Range} {
   console.log("| Searching main calendar");
   let range = sheet.getRange(headerRows + 1, 1, sheet.getLastRow() - headerRows - 1, 6);
-  let p_date: number;
+  let p_date = 0;
   let month = mainCalendarStartMonth;
 
   for (let row = 0; row < range.getHeight(); row++) {
@@ -65,7 +65,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
   console.log("| Searching " + calendarSheet.name);
   let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRows -1;
   let headers: string[] = [];
-  let columns: SpreadsheetApp.Range[] = [];
+  let columns: GoogleAppsScript.Spreadsheet.Range[] = [];
   for (let i of calendarSheet.infoColumns) {
     let headerCell = calendarSheet.sheet.getRange(calendarSheet.headerRows, i);
     if (headerCell.getMergedRanges().length == 0)
@@ -94,8 +94,8 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
         }
       }
       break;
-    case DateFormat.Week_block:
-    case DateFormat.Week_day:
+    case DateFormat.WeekBlock:
+    case DateFormat.WeekDay:
       if (date.getDay() > 0 && date.getDay() < 6) {
         pattern = /\d+/; // First sequence of digits
 
@@ -103,11 +103,11 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
           let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
           let weekMatches = pattern.exec(weekString);
 
-          if (weekMatches != null) if (weekMatches[0] == weekNum) {
-            if (calendarSheet.dateFormat == DateFormat.week_day)
+          if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
+            if (calendarSheet.dateFormat == DateFormat.WeekDay)
               row = row + date.getDay() - 1;
             else
-              row = row + blocks[date.getDay()] - 1;
+              row = row + blocks[<1 | 2 | 3 | 4 | 5>date.getDay()] - 1;
             
             for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
               output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
@@ -125,7 +125,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
   return {};
 }
 
-function getRecipients(grade: number, sheets: GradeSheetDict, column: number): string {
+function getRecipients(grade: Grade, sheets: GradeDict<GoogleAppsScript.Spreadsheet.Sheet>, column: number): string {
   let sheet = sheets[grade];
   let range = sheet.getRange(2, column, signupSheetHeight, 1);
   let values = range.getDisplayValues();
@@ -140,6 +140,6 @@ function getRecipients(grade: number, sheets: GradeSheetDict, column: number): s
   return recipients.join(",");
 }
 
-function dateMatches(calendarSheet, row, month, date) {
+// function dateMatches(calendarSheet, row, month, date) {
   
-}
+// }
