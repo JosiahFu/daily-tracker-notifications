@@ -31,7 +31,15 @@ const trackerSpreadsheetsData: GradeDict<TrackerSpreadsheet> = {
     new CalendarSheet("Spanish 2 Native", 3, 3, DateFormat.Date, [4,5,6]),
     new CalendarSheet("PBS", 3, 3, DateFormat.Date, [4,5,6]),
     new CalendarSheet("World History", 3, 3, DateFormat.Date, [4,5,6]),
-  )//,
-  // 11: SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit"),
+  ),
+  11: new TrackerSpreadsheet(
+    "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
+    "11th Grade Calendar", 3,
+    new CalendarSheet("English 11", 3, 1, DateFormat.Week, [3,4,5]).overrideHeaderRow(5), // TODO
+    new CalendarSheet("US History", 6, 2, DateFormat.DateRange, [3,4,5,6]),
+    new CalendarSheet("Spanish 3", 4, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("Spanish 4", 4, 1, DateFormat.DateRange, [3,4,5]),
+    new CalendarSheet("Biology", 4,  ) // TODO
+  ),
   // 12: SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit")
 };
