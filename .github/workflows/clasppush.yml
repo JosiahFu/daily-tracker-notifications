@@ -41,6 +41,6 @@ jobs:
           # scriptId written in .clasp.json
           scriptId: ${{ secrets.SCRIPT_ID_DEV }}
           # Directory where scripts are stored
-          #rootDir: 
+          rootDir: src
           # Command to execute(push or deploy)
           command: 'push'
