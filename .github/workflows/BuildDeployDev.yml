@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Clasp Push
+name: Build and Deploy - Development
 
 # Controls when the workflow will run
 on:
@@ -13,15 +13,42 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      - name: Install Packages
+        run: npm install
+
+      - name: Compile
+        run: tsc
+      
+      - name: Compress Build
+        run: |
+          cp src/appsscript.json build/appsscript.json
+          zip -r build build
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: archived-build
+          path: build.zip
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: archived-build
+      
+      - name: Decompress Build
+        run: unzip build.zip
 
       - name: Clasp Push
         # You may pin to the exact commit or the version.
@@ -40,6 +67,6 @@ jobs:
           # scriptId written in .clasp.json
           scriptId: ${{ secrets.SCRIPT_ID_DEV }}
           # Directory where scripts are stored
-          rootDir: src
+          rootDir: 'build'
           # Command to execute(push or deploy)
           command: 'push'
