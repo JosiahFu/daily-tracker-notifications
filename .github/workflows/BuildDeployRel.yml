@@ -1,27 +1,56 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Clasp Push
+name: Build and Deploy - Release
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "dev/trunk" branch
-  push:
-    branches: [ "dev/trunk" ]
+  release:
+    types: [published]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      - name: Install Packages
+        run: npm install
+
+      - name: Compile
+        run: tsc
+      
+      - name: Compress Build
+        if: always()
+        run: |
+          cp src/appsscript.json build/appsscript.json
+          zip -r build build
+      
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: archived-build
+          path: build.zip
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: archived-build
+      
+      - name: Decompress Build
+        run: unzip build.zip
 
       - name: Clasp Push
         # You may pin to the exact commit or the version.
@@ -38,8 +67,9 @@ jobs:
           # clientSecret written in .clasprc.json
           clientSecret: ${{ secrets.CLIENT_SECRET }}
           # scriptId written in .clasp.json
-          scriptId: ${{ secrets.SCRIPT_ID_DEV }}
+          scriptId: ${{ secrets.SCRIPT_ID_MAIN }}
           # Directory where scripts are stored
-          rootDir: src
+          rootDir: 'build'
           # Command to execute(push or deploy)
-          command: 'push'
+          command: 'deploy'
+          description: '${{ github.event.release.name }}'
