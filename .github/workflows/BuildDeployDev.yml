@@ -28,6 +28,7 @@ jobs:
         run: tsc
       
       - name: Compress Build
+        if: always()
         run: |
           cp src/appsscript.json build/appsscript.json
           zip -r build build
