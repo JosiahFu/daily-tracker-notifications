@@ -34,6 +34,7 @@ jobs:
           zip -r build build
       
       - name: Upload Artifacts
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: archived-build
@@ -42,6 +43,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
