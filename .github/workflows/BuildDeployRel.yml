@@ -26,18 +26,16 @@ jobs:
       - name: Compile
         run: tsc
       
-      - name: Compress Build
-        if: always()
+      - if: always()
         run: |
           cp src/appsscript.json build/appsscript.json
-          zip -r build build
       
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: archived-build
-          path: build.zip
+          path: build
 
   deploy:
     needs: build
@@ -49,9 +47,6 @@ jobs:
         with:
           name: archived-build
       
-      - name: Decompress Build
-        run: unzip build.zip
-
       - name: Clasp Push
         # You may pin to the exact commit or the version.
         uses: JosiahFu/clasp-action@v1.2.1
