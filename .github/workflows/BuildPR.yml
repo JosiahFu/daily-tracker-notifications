@@ -27,15 +27,13 @@ jobs:
       - name: Compile
         run: tsc
       
-      - name: Compress Build
-        if: always()
+      - if: always()
         run: |
           cp src/appsscript.json build/appsscript.json
-          zip -r build build
       
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: archived-build
-          path: build.zip
+          name: build
+          path: build
