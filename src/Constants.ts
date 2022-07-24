@@ -40,18 +40,25 @@ type GradeDict<T> = {[key in Grade]: T};
 
 class CalendarSheet {
   name: string;
-  headerRows: number;
+  headerRowCount: number;
+  columnTitleRow: number
   dateColumn: number;
   dateFormat: DateFormat;
   infoColumns: number[];
   sheet: GoogleAppsScript.Spreadsheet.Sheet;
 
-  constructor(name: string, headerRows: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
+  constructor(name: string, headerRowCount: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
     this.name = name;
-    this.headerRows = headerRows;
+    this.headerRowCount = headerRowCount;
+    this.columnTitleRow = headerRowCount;
     this.dateColumn = dateColumn;
     this.dateFormat = dateFormat;
     this.infoColumns = infoColumns;
+  }
+  
+  overrideColumnTitleRow(row: number): CalendarSheet {
+    this.columnTitleRow = row;
+    return this;
   }
 
   findSheet(spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet): void {
