@@ -28,7 +28,9 @@ enum DateFormat {
   DateRange = "DATE_RANGE",
   Week = "WEEK",
   WeekBlock = "WEEK_BLOCK",
-  WeekDay = "WEEK_DAY"
+  WeekBlockOnly = "WEEK_BLOCK_ONLY",
+  WeekDay = "WEEK_DAY",
+  WeekDayName = "WEEK_DAY_NAME"
 }
 
 type CalendarContents = {[key: string]: GoogleAppsScript.Spreadsheet.Range};
@@ -40,18 +42,25 @@ type GradeDict<T> = {[key in Grade]: T};
 
 class CalendarSheet {
   name: string;
-  headerRows: number;
+  headerRowCount: number;
+  columnTitleRow: number
   dateColumn: number;
   dateFormat: DateFormat;
   infoColumns: number[];
   sheet: GoogleAppsScript.Spreadsheet.Sheet;
 
-  constructor(name: string, headerRows: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
+  constructor(name: string, headerRowCount: number, dateColumn: number, dateFormat: DateFormat, infoColumns: number[]) {
     this.name = name;
-    this.headerRows = headerRows;
+    this.headerRowCount = headerRowCount;
+    this.columnTitleRow = headerRowCount;
     this.dateColumn = dateColumn;
     this.dateFormat = dateFormat;
     this.infoColumns = infoColumns;
+  }
+  
+  overrideColumnTitleRow(row: number): CalendarSheet {
+    this.columnTitleRow = row;
+    return this;
   }
 
   findSheet(spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet): void {

@@ -1,5 +1,7 @@
 let weekNum: number;
 
+// TODO: PD Weeks
+
 function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): TrackerContents {
   console.log("Collecting events on " + (date.getMonth() + 1) + "/" + date.getDate() + " from " + trackerSpreadsheet.spreadsheet.getName());
 
@@ -63,16 +65,16 @@ function parseMainCalendar(sheet: GoogleAppsScript.Spreadsheet.Sheet, headerRows
 
 function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): CalendarContents {
   console.log("| Searching " + calendarSheet.name);
-  let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRows -1;
+  let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRowCount -1;
   let headers: string[] = [];
   let columns: GoogleAppsScript.Spreadsheet.Range[] = [];
   for (let i of calendarSheet.infoColumns) {
-    let headerCell = calendarSheet.sheet.getRange(calendarSheet.headerRows, i);
+    let headerCell = calendarSheet.sheet.getRange(calendarSheet.columnTitleRow, i);
     if (headerCell.getMergedRanges().length == 0)
       headers.push(headerCell.getDisplayValue());
     else
       headers.push(headerCell.getMergedRanges()[0].getDisplayValue());
-    columns.push(calendarSheet.sheet.getRange(calendarSheet.headerRows + 1, i, infoRowsCount, 1));
+    columns.push(calendarSheet.sheet.getRange(calendarSheet.headerRowCount + 1, i, infoRowsCount, 1));
   }
 
   let output: CalendarContents = {};
@@ -82,7 +84,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
     case DateFormat.Date:
       pattern = new RegExp("(?<!\d\d\/)0?" + (date.getMonth() + 1) + "\\/0?" + date.getDate());
 
-      for (let row = calendarSheet.headerRows + 1; row <= infoRowsCount; row++) {
+      for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
         let dateString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();    
 
         if (pattern.test(dateString)) {
@@ -101,7 +103,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
       if (date.getDay() > 0 && date.getDay() < 6) {
         pattern = /\d+/; // First sequence of digits
 
-        for (let row = calendarSheet.headerRows + 1; row <= infoRowsCount; row++) {
+        for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
           let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
           let weekMatches = pattern.exec(weekString);
 
@@ -120,7 +122,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
       if (date.getDay() > 0 && date.getDay() < 6) {
         pattern = /\d+/; // First sequence of digits
 
-        for (let row = calendarSheet.headerRows + 1; row <= infoRowsCount; row++) {
+        for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
           let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
           let weekMatches = pattern.exec(weekString);
 
@@ -128,7 +130,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
             if (calendarSheet.dateFormat == DateFormat.WeekDay)
               row = row + date.getDay() - 1;
             else
-              row = row + blocks[<1 | 2 | 3 | 4 | 5>date.getDay()] - 1;
+              row = row + blocks[<1 | 2 | 3 | 4 | 5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
             
             for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
               output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);

@@ -35,11 +35,32 @@ const trackerSpreadsheetsData: GradeDict<TrackerSpreadsheet> = {
   11: new TrackerSpreadsheet(
     "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
     "11th Grade Calendar", 3,
-    new CalendarSheet("English 11", 3, 1, DateFormat.Week, [3,4,5]).overrideHeaderRow(5), // TODO
+    new CalendarSheet("English 11", 3, 1, DateFormat.Week, [3,4,5]).overrideColumnTitleRow(5), // TODO
     new CalendarSheet("US History", 6, 2, DateFormat.DateRange, [3,4,5,6]),
     new CalendarSheet("Spanish 3", 4, 1, DateFormat.WeekBlock, [3,4,5]),
     new CalendarSheet("Spanish 4", 4, 1, DateFormat.DateRange, [3,4,5]),
-    new CalendarSheet("Biology", 4,  ) // TODO
+    new CalendarSheet("Biology", 4, 2, DateFormat.WeekBlock, [4,5,6,7]),
+    new CalendarSheet("Precalculus", 3, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("HBS", 3, 1, DateFormat.WeekBlock, [3,4,5,6]),
+    new CalendarSheet("CEA", 3, 1, DateFormat.WeekBlock, [3,4,5])
   ),
-  // 12: SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit")
+  12: new TrackerSpreadsheet(
+    "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
+    "12th Grade Calendar", 3,
+    new CalendarSheet("Gov/Econ", 3, 3, DateFormat.DateRange, [4,5,6]),
+    new CalendarSheet("English 12", 4, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("Psych", 3, 1, DateFormat.WeekBlock, [3,4,5,6]),
+    new CalendarSheet("CCL", 3, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("Adv Calc", 4, 1, DateFormat.WeekDayName /*TODO new format*/, [3,4,5]),
+    new CalendarSheet("Calculus", 4, 1, DateFormat.WeekBlock /*Plus some weird things*/, [3,4,5]),
+    new CalendarSheet("Problem-Solving", 4, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("POE", 3, 3, DateFormat.DateRange, [4,5,6]),
+    new CalendarSheet("CSP", 3, 1, DateFormat.WeekBlockOnly, [3,4,5]),
+    new CalendarSheet("MI", 4, 1, DateFormat.WeekBlock, [4,5,6]),
+    new CalendarSheet("Adv Physics", 3, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("AE", 3, 1, DateFormat.WeekBlock, [4,5,6]),
+    new CalendarSheet("CEA Honors(MCG)", 3, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("Art and Design 2", 5, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet("Art 3", 5, 1, DateFormat.WeekBlock, [3,4,5])
+  )
 };
