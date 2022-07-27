@@ -33,11 +33,11 @@ const trackerSpreadsheetsData: GradeDict<TrackerSpreadsheet> = {
     new CalendarSheet("World History", 3, 3, DateFormat.Date, [4,5,6]),
   ),
   11: new TrackerSpreadsheet(
-    "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
+    "https://docs.google.com/spreadsheets/d/1a3HkDixva5kksYW017AafwFDnj4RWJJX29tSTiISwh4/edit",
     "11th Grade Calendar", 3,
     new CalendarSheet("English 11", 3, 1, DateFormat.Week, [3,4,5]).overrideHeaders(["Zoom Session 1", "Zoom Session 2", "Zoom Session 3"]), // TODO
     new CalendarSheet("US History", 6, 2, DateFormat.DateRange, [3,4,5,6]),
-    new CalendarSheet("Spanish 3", 4, 1, DateFormat.WeekBlock, [3,4,5]),
+    new CalendarSheet(" Spanish 3", 4, 1, DateFormat.WeekBlock, [3,4,5]),
     new CalendarSheet("Spanish 4", 4, 1, DateFormat.WeekBlock, [3,4,5]),
     new CalendarSheet("Biology", 4, 2, DateFormat.WeekBlock, [4,5,6,7]),
     new CalendarSheet("Precalculus", 3, 1, DateFormat.WeekBlock, [3,4,5]),
@@ -45,7 +45,7 @@ const trackerSpreadsheetsData: GradeDict<TrackerSpreadsheet> = {
     new CalendarSheet("CEA", 3, 1, DateFormat.WeekBlock, [3,4,5])
   ),
   12: new TrackerSpreadsheet(
-    "https://docs.google.com/spreadsheets/d/1XhQqAfjMGV8Q4Mtxbh4wfi8xjbZ3Au3uftDxjt_4498/edit",
+    "https://docs.google.com/spreadsheets/d/1Jcc5ZnoGg8EVEDdsO47dzJD6b9vpXSMekCdq_mTIRA4/edit",
     "12th Grade Calendar", 3,
     new CalendarSheet("Gov/Econ", 3, 3, DateFormat.DateRange, [4,5,6]),
     new CalendarSheet("English 12", 4, 1, DateFormat.WeekBlock, [3,4,5]),
