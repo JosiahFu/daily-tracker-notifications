@@ -28,7 +28,9 @@ enum DateFormat {
   DateRange = "DATE_RANGE",
   Week = "WEEK",
   WeekBlock = "WEEK_BLOCK",
-  WeekDay = "WEEK_DAY"
+  WeekBlockOnly = "WEEK_BLOCK_ONLY",
+  WeekDay = "WEEK_DAY",
+  WeekDayName = "WEEK_DAY_NAME"
 }
 
 type CalendarContents = {[key: string]: GoogleAppsScript.Spreadsheet.Range};

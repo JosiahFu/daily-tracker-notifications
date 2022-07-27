@@ -130,7 +130,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
             if (calendarSheet.dateFormat == DateFormat.WeekDay)
               row = row + date.getDay() - 1;
             else
-              row = row + blocks[<1 | 2 | 3 | 4 | 5>date.getDay()] - 1;
+              row = row + blocks[<1 | 2 | 3 | 4 | 5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
             
             for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
               output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
