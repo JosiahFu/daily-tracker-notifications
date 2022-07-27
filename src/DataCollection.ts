@@ -66,14 +66,16 @@ function parseMainCalendar(sheet: GoogleAppsScript.Spreadsheet.Sheet, headerRows
 function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): CalendarContents {
   console.log("| Searching " + calendarSheet.name);
   let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRowCount -1;
-  let headers: string[] = [];
+  let headers: string[] = calendarSheet.headers || [];
   let columns: GoogleAppsScript.Spreadsheet.Range[] = [];
   for (let i of calendarSheet.infoColumns) {
-    let headerCell = calendarSheet.sheet.getRange(calendarSheet.columnTitleRow, i);
-    if (headerCell.getMergedRanges().length == 0)
-      headers.push(headerCell.getDisplayValue());
-    else
-      headers.push(headerCell.getMergedRanges()[0].getDisplayValue());
+    if (calendarSheet.headers == undefined) {
+      let headerCell = calendarSheet.sheet.getRange(calendarSheet.columnTitleRow, i);
+      if (headerCell.getMergedRanges().length == 0)
+        headers.push(headerCell.getDisplayValue());
+      else
+        headers.push(headerCell.getMergedRanges()[0].getDisplayValue());
+    }
     columns.push(calendarSheet.sheet.getRange(calendarSheet.headerRowCount + 1, i, infoRowsCount, 1));
   }
 
@@ -130,7 +132,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
             if (calendarSheet.dateFormat == DateFormat.WeekDay)
               row = row + date.getDay() - 1;
             else
-              row = row + blocks[<1 | 2 | 3 | 4 | 5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
+              row = row + blocks[<1|2|3|4|5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
             
             for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
               output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);

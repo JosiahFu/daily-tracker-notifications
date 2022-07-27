@@ -43,6 +43,7 @@ type GradeDict<T> = {[key in Grade]: T};
 class CalendarSheet {
   name: string;
   headerRowCount: number;
+  headers?: string[];
   columnTitleRow: number
   dateColumn: number;
   dateFormat: DateFormat;
@@ -60,6 +61,11 @@ class CalendarSheet {
   
   overrideColumnTitleRow(row: number): CalendarSheet {
     this.columnTitleRow = row;
+    return this;
+  }
+  
+  overrideHeaders(headers: string[]) {
+    this.headers = headers;
     return this;
   }
 
