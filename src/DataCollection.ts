@@ -85,67 +85,101 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
   switch (calendarSheet.dateFormat) {
     case DateFormat.Date:
       pattern = new RegExp("(?<!\d\d\/)0?" + (date.getMonth() + 1) + "\\/0?" + date.getDate());
-
-      for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
-        let dateString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();    
-
-        if (pattern.test(dateString)) {
-          for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
-            output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
-          }
-          console.log("| Found events in row with date string " + dateString);
-          return output;
-        }
-      }
       break;
     case DateFormat.DateRange:
-    // TODO
+      pattern = /(\d{1,2})[.\/](\d{1,2})(?: ?- ?(\d{1,2})[.\/](\d{1,2}))?/;
       break;
     case DateFormat.Week:
-      if (date.getDay() > 0 && date.getDay() < 6) {
-        pattern = /\d+/; // First sequence of digits
-
-        for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
-          let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
-          let weekMatches = pattern.exec(weekString);
-
-          if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
-            for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
-              output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
-            }
-            console.log("| Found events in row with week string " + weekString);
-            return output;
-          }
-        }
-      }
-      break;
     case DateFormat.WeekBlock:
+    case DateFormat.WeekBlockOnly:
     case DateFormat.WeekDay:
-      if (date.getDay() > 0 && date.getDay() < 6) {
-        pattern = /\d+/; // First sequence of digits
-
-        for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
-          let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
-          let weekMatches = pattern.exec(weekString);
-
-          if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
-            if (calendarSheet.dateFormat == DateFormat.WeekDay)
-              row = row + date.getDay() - 1;
-            else
-              row = row + blocks[<1|2|3|4|5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
-            
-            for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
-              output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
-            }
-            console.log("| Found events in row with week string " + weekString);
-            return output;
-          }
-        }
-      }
-      break;
-    default:
+    case DateFormat.WeekDayName:
+      pattern = /\d+/; // First sequence of digits
       break;
   }
+
+  let todayRow: undefined | number;
+  let dateString = "";
+
+  for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount || typeof todayRow == "number"; row++) {
+    dateString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();    
+
+    switch(calendarSheet.dateFormat) {
+      case DateFormat.Date:
+        if (pattern.test(dateString)) {
+          todayRow = row;
+        }
+        break;
+      case DateFormat.DateRange:
+        let results = pattern.exec(dateString);
+        if (results == null)
+          break;
+        if (results.length == 3) {
+          if (parseInt(results[1]) == date.getMonth() && parseInt(results[2]) == date.getDate()) {
+            todayRow = row;
+            break;
+          }
+        }
+        if (/*TODO: If date in range*/ false) {
+          todayRow = row;
+        }
+        break;
+      case DateFormat.Week:
+    }
+  }
+
+  if (typeof todayRow == "number") {
+    for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
+      output[headers[i]] = calendarSheet.sheet.getRange(todayRow, calendarSheet.infoColumns[i]);
+    }
+    console.log("| Found events in row with date string " + dateString);
+    return output;
+  }
+  //   case DateFormat.Week:
+  //     if (date.getDay() > 0 && date.getDay() < 6) {
+  //       pattern = /\d+/; // First sequence of digits
+
+  //       for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
+  //         let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
+  //         let weekMatches = pattern.exec(weekString);
+
+  //         if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
+  //           for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
+  //             output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
+  //           }
+  //           console.log("| Found events in row with week string " + weekString);
+  //           return output;
+  //         }
+  //       }
+  //     }
+  //     break;
+  //   case DateFormat.WeekBlock:
+  //   case DateFormat.WeekDay:
+  //     if (date.getDay() > 0 && date.getDay() < 6) {
+  //       pattern = /\d+/; // First sequence of digits
+
+  //       for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
+  //         let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
+  //         let weekMatches = pattern.exec(weekString);
+
+  //         if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
+  //           if (calendarSheet.dateFormat == DateFormat.WeekDay)
+  //             row = row + date.getDay() - 1;
+  //           else
+  //             row = row + blocks[<1|2|3|4|5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
+  //           
+  //           for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
+  //             output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
+  //           }
+  //           console.log("| Found events in row with week string " + weekString);
+  //           return output;
+  //         }
+  //       }
+  //     }
+  //     break;
+  //   default:
+  //     break;
+  // }
   console.warn("| Could not find events on " + calendarSheet.name);
   return {};
 }
