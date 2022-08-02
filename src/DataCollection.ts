@@ -66,15 +66,12 @@ function parseMainCalendar(sheet: GoogleAppsScript.Spreadsheet.Sheet, headerRows
 function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): CalendarContents {
   console.log("| Searching " + calendarSheet.name);
   let infoRowsCount = calendarSheet.sheet.getLastRow() - calendarSheet.headerRowCount -1;
-  let headers: string[] = calendarSheet.headers || [];
+  let headers: string[] = calendarSheet.headers ?? [];
   let columns: GoogleAppsScript.Spreadsheet.Range[] = [];
   for (let i of calendarSheet.infoColumns) {
     if (calendarSheet.headers == undefined) {
       let headerCell = calendarSheet.sheet.getRange(calendarSheet.columnTitleRow, i);
-      if (headerCell.getMergedRanges().length == 0)
-        headers.push(headerCell.getDisplayValue());
-      else
-        headers.push(headerCell.getMergedRanges()[0].getDisplayValue());
+      headers.push((headerCell.getMergedRanges()[0] ?? headerCell).getDisplayValue());
     }
     columns.push(calendarSheet.sheet.getRange(calendarSheet.headerRowCount + 1, i, infoRowsCount, 1));
   }
@@ -89,27 +86,26 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
     case DateFormat.DateRange:
       pattern = /(\d{1,2})[.\/](\d{1,2})(?: ?- ?(\d{1,2})[.\/](\d{1,2}))?/;
       break;
-    case DateFormat.Week:
-    case DateFormat.WeekBlock:
-    case DateFormat.WeekBlockOnly:
-    case DateFormat.WeekDay:
-    case DateFormat.WeekDayName:
+    default: // Is a week format
       pattern = /\d+/; // First sequence of digits
-      break;
   }
 
   let todayRow: undefined | number;
-  let dateString = "";
+  let dateString: undefined | string;
+  let weekString: undefined | string;
 
-  for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount || typeof todayRow == "number"; row++) {
+  dateSearch:
+  for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
     dateString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();    
 
     switch(calendarSheet.dateFormat) {
       case DateFormat.Date:
         if (pattern.test(dateString)) {
           todayRow = row;
+          break dateSearch;
         }
         break;
+
       case DateFormat.DateRange:
         let results = pattern.exec(dateString);
         if (results == null)
@@ -117,69 +113,61 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
         if (results.length == 3) {
           if (parseInt(results[1]) == date.getMonth() && parseInt(results[2]) == date.getDate()) {
             todayRow = row;
-            break;
+            break dateSearch;
           }
         }
         if (/*TODO: If date in range*/ false) {
           todayRow = row;
+          break dateSearch;
         }
         break;
-      case DateFormat.Week:
+
+      default: // Is a week format
+        weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
+        let weekMatches = pattern.exec(weekString);
+
+        if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
+          let weekHeight = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getNumRows();
+          
+          switch (calendarSheet.dateFormat) {
+            case DateFormat.Week:
+              todayRow = row;
+              break;
+
+            case DateFormat.WeekBlock:
+              let dayOffset = (overrideWeeks[weekNum] ?? blocks)[Object.values(WeekDays)[date.getDay()]];
+              if (dayOffset < weekHeight)
+                todayRow = row + dayOffset - 1;
+              break;
+
+            case DateFormat.WeekBlockOnly:
+              // TODO: What is this supposed to be???
+              break;
+
+            case DateFormat.WeekDay:
+              if (date.getDay() < weekHeight && date.getDay() >= 1 && date.getDay() <= 5)
+                todayRow = row + date.getDay() - 1;
+              break;
+            case DateFormat.WeekDayName:
+              // TODO
+              break;
+          }
+          
+          break dateSearch;
+        }
     }
   }
 
   if (typeof todayRow == "number") {
-    for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
+    for (let i = 0; i < calendarSheet.infoColumns.length; i++)
       output[headers[i]] = calendarSheet.sheet.getRange(todayRow, calendarSheet.infoColumns[i]);
-    }
-    console.log("| Found events in row with date string " + dateString);
+
+    if (weekString == undefined)
+      console.log("| Found events in row with date string " + dateString);
+    else
+      console.log("| Found events in row with week string " + weekString);
     return output;
   }
-  //   case DateFormat.Week:
-  //     if (date.getDay() > 0 && date.getDay() < 6) {
-  //       pattern = /\d+/; // First sequence of digits
-
-  //       for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
-  //         let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
-  //         let weekMatches = pattern.exec(weekString);
-
-  //         if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
-  //           for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
-  //             output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
-  //           }
-  //           console.log("| Found events in row with week string " + weekString);
-  //           return output;
-  //         }
-  //       }
-  //     }
-  //     break;
-  //   case DateFormat.WeekBlock:
-  //   case DateFormat.WeekDay:
-  //     if (date.getDay() > 0 && date.getDay() < 6) {
-  //       pattern = /\d+/; // First sequence of digits
-
-  //       for (let row = calendarSheet.headerRowCount + 1; row <= infoRowsCount; row++) {
-  //         let weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
-  //         let weekMatches = pattern.exec(weekString);
-
-  //         if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
-  //           if (calendarSheet.dateFormat == DateFormat.WeekDay)
-  //             row = row + date.getDay() - 1;
-  //           else
-  //             row = row + blocks[<1|2|3|4|5>date.getDay()] - 1; // TODO: Make sure it doesn't go outside of the week block
-  //           
-  //           for (let i = 0; i < calendarSheet.infoColumns.length; i++) {
-  //             output[headers[i]] = calendarSheet.sheet.getRange(row, calendarSheet.infoColumns[i]);
-  //           }
-  //           console.log("| Found events in row with week string " + weekString);
-  //           return output;
-  //         }
-  //       }
-  //     }
-  //     break;
-  //   default:
-  //     break;
-  // }
   console.warn("| Could not find events on " + calendarSheet.name);
   return {};
 }
@@ -189,13 +177,10 @@ function getRecipients(grade: Grade, sheets: GradeDict<GoogleAppsScript.Spreadsh
   let range = sheet.getRange(2, column, signupSheetHeight, 1);
   let values = range.getDisplayValues();
   let recipients: string[] = [];
-  for (let i of values) {
-    for (let j of i) {
-      if (j != "") {
+  for (let i of values)
+    for (let j of i)
+      if (j != "")
         recipients.push(j);
-      }
-    }
-  }
   return recipients.join(",");
 }
 

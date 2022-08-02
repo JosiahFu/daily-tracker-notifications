@@ -1,11 +1,24 @@
 const mainCalendarStartMonth = 7; // August
 
-const blocks = {
-  1: 1,
-  2: 2,
-  3: 2,
-  4: 3,
-  5: 3
+const blocks: WeekSchedule = {
+  [WeekDays.Monday]: 1,
+  [WeekDays.Tuesday]: 2,
+  [WeekDays.Wednesday]: 2,
+  [WeekDays.Thursday]: 3,
+  [WeekDays.Friday]: 3
+}
+
+const pdWeek: WeekSchedule = {
+  [WeekDays.Monday]: 1,
+  [WeekDays.Tuesday]: 1,
+  [WeekDays.Wednesday]: 2,
+  [WeekDays.Thursday]: 2,
+  [WeekDays.Friday]: 3
+}
+
+const overrideWeeks: {[key: number]: WeekSchedule} = {
+  24: pdWeek,
+  27: pdWeek
 }
 
 const trackerSpreadsheetsData: GradeDict<TrackerSpreadsheet> = {

@@ -16,14 +16,12 @@ function formatEventsAsEmail(contents: TrackerContents, url: string, grade: numb
   for (let i in contents) {
     contentFormatted += htmlFormatSubject(i, contents[i], i == Object.keys(contents)[0]);
 
-    if (Object.keys(contents[i]).length > 0) {
+    if (Object.keys(contents[i]).length > 0) 
       hasContent = true;
-    }
   }
 
-  if (!hasContent) {
+  if (!hasContent) 
     return null;
-  }
 
   contentFormatted +=
     "</div>" +
@@ -70,33 +68,27 @@ function richTextToHTML(cell: GoogleAppsScript.Spreadsheet.Range): string {
     
     formattedRun = formattedRun.replaceAll(/\r?\n/g, "<br>");
 
-    if (style.isBold()) {
+    if (style.isBold())
       css += "font-weight: bold;";
-    }
 
-    if (style.isItalic()) {
+    if (style.isItalic()) 
       css += "font-style: italic;";
-    }
 
-    if (style.isUnderline() && style.isStrikethrough()) {
+    if (style.isUnderline() && style.isStrikethrough())
       css += "text-decoration: underline overline;"
-    } else if (style.isUnderline()) {
+    else if (style.isUnderline())
       css += "text-decoration: underline;";
-    } else if (style.isStrikethrough()) {
+    else if (style.isStrikethrough()) 
       css += "text-decoration: line-through;";
-    }
 
-    if (style.getForegroundColorObject() != null) {
+    if (style.getForegroundColorObject() != null) 
       css += "color: " + checkNull(style.getForegroundColorObject()).asRgbColor().asHexString() + ";";
-    }
 
-    if (css != "") {
+    if (css != "") 
       formattedRun = "<span style='" + css + "'>" + formattedRun + "</span>";
-    }
 
-    if (run.getLinkUrl() != null) {
+    if (run.getLinkUrl() != null)
       formattedRun = "<a href=\"" + run.getLinkUrl() + "\" target=\"_blank\">" + formattedRun + "</a>"
-    }
 
     output += formattedRun;
   }

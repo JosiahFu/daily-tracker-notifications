@@ -33,12 +33,21 @@ enum DateFormat {
   WeekDayName = "WEEK_DAY_NAME"
 }
 
+enum WeekDays {
+  Monday = "MONDAY",
+  Tuesday = "TUESDAY",
+  Wednesday = "WEDNESDAY",
+  Thursday = "THURSDAY",
+  Friday = "FRIDAY"
+}
+
 type CalendarContents = {[key: string]: GoogleAppsScript.Spreadsheet.Range};
 type TrackerContents = {[key: string]: CalendarContents};
 type Grade = 9 | 10 | 11 | 12;
 type TargetDay = "today" | "tomorrow";
 
 type GradeDict<T> = {[key in Grade]: T};
+type WeekSchedule = {[key in WeekDays]: number};
 
 class CalendarSheet {
   name: string;
@@ -46,6 +55,7 @@ class CalendarSheet {
   headers?: string[];
   columnTitleRow: number
   dateColumn: number;
+  secondayDateColumn?: number;
   dateFormat: DateFormat;
   infoColumns: number[];
   sheet: GoogleAppsScript.Spreadsheet.Sheet;
@@ -64,8 +74,13 @@ class CalendarSheet {
     return this;
   }
   
-  overrideHeaders(headers: string[]) {
+  overrideHeaders(headers: string[]): CalendarSheet {
     this.headers = headers;
+    return this;
+  }
+  
+  setSecondayDateColumn(column: number): CalendarSheet {
+    this.secondayDateColumn = column;
     return this;
   }
 
