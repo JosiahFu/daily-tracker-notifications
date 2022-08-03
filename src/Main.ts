@@ -1,5 +1,5 @@
 function testRemind(): void {
-  sendRemindEmail("josiah_fu@student.davincischools.org", 10, date_today);
+  sendRemindEmail("josiah_fu@student.davincischools.org", 12, date_today);
 }
 
 function test(): void {

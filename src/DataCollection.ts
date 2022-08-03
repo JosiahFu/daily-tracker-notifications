@@ -117,24 +117,26 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
           }
         }
         
-        let startDate = new Date(date_today.getFullYear(), parseInt(results[1]) - 1, parseInt(results[2]));
-        let endDate = new Date(date_today.getFullYear(), parseInt(results[3]) - 1, parseInt(results[4]));
+        let startDate = new Date(date.getFullYear(), parseInt(results[1]) - 1, parseInt(results[2]));
+        let endDate = new Date(date.getFullYear(), parseInt(results[3]) - 1, parseInt(results[4]));
         if (endDate < startDate)
           endDate.setFullYear(startDate.getFullYear() + 1);
-        endDate.setDate(endDate.getDate() + 1); // if endDate has began already, it should still include today
+        let endDateDate_tmp = endDate.getDate(); // Need a variable for transfer because it acts weird when you do it in one line
+        endDate.setDate(endDateDate_tmp + 1); // if endDate has began already, it should still include today
 
-        if (startDate < date && date < endDate) {
+        if (startDate <= date && date < endDate) {
           todayRow = row;
           break dateSearch;
         }
         break;
 
       default: // Is a week format
-        weekString = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getDisplayValue().toString();
+        let weekCell = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn);
+        weekString = weekCell.getDisplayValue().toString();
         let weekMatches = pattern.exec(weekString);
 
         if (weekMatches != null) if (weekMatches[0] == weekNum.toString()) {
-          let weekHeight = calendarSheet.sheet.getRange(row, calendarSheet.dateColumn).getNumRows();
+          let weekHeight = weekCell.getMergedRanges()[0]?.getNumRows() ?? 1;
           
           switch (calendarSheet.dateFormat) {
             case DateFormat.Week:
@@ -142,7 +144,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
               break;
 
             case DateFormat.WeekBlock:
-              let dayOffset = (overrideWeeks[weekNum] ?? blocks)[Object.values(WeekDays)[date.getDay()]];
+              let dayOffset = (overrideWeeks[weekNum] ?? blocks)[Object.values(WeekDays)[date.getDay()-1]];
               if (dayOffset < weekHeight)
                 todayRow = row + dayOffset - 1;
               break;
