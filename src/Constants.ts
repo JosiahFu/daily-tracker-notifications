@@ -41,6 +41,14 @@ enum WeekDays {
   Friday = "FRIDAY"
 }
 
+const weekDayAbbreviations: {[key: string]: WeekDays} = {
+  m: WeekDays.Monday,
+  tu: WeekDays.Tuesday,
+  w: WeekDays.Wednesday,
+  th: WeekDays.Thursday,
+  f: WeekDays.Friday
+}
+
 type CalendarContents = {[key: string]: GoogleAppsScript.Spreadsheet.Range};
 type TrackerContents = {[key: string]: CalendarContents};
 type Grade = 9 | 10 | 11 | 12;

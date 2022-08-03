@@ -116,7 +116,14 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
             break dateSearch;
           }
         }
-        if (/*TODO: If date in range*/ false) {
+        
+        let startDate = new Date(date_today.getFullYear(), parseInt(results[1]) - 1, parseInt(results[2]));
+        let endDate = new Date(date_today.getFullYear(), parseInt(results[3]) - 1, parseInt(results[4]));
+        if (endDate < startDate)
+          endDate.setFullYear(startDate.getFullYear() + 1);
+        endDate.setDate(endDate.getDate() + 1); // if endDate has began already, it should still include today
+
+        if (startDate < date && date < endDate) {
           todayRow = row;
           break dateSearch;
         }
@@ -141,7 +148,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
               break;
 
             case DateFormat.WeekBlockOnly:
-              // TODO: What is this supposed to be???
+              // How do I do this?
               break;
 
             case DateFormat.WeekDay:
@@ -149,7 +156,16 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
                 todayRow = row + date.getDay() - 1;
               break;
             case DateFormat.WeekDayName:
-              // TODO
+              for (let i = 0; i < weekHeight; i++) {
+                let cell = calendarSheet.sheet.getRange(row + i, <number>calendarSheet.secondayDateColumn /* Safer type conversion*/);
+                let results = /[A-Za-z]+/.exec(cell.getDisplayValue());
+                if (results == null)
+                  break;
+                if(weekDayAbbreviations[results[0]] == Object.values(WeekDays)[date.getDay()]) {
+                  todayRow = row + i;
+                  break;
+                }
+              }
               break;
           }
           
