@@ -24,12 +24,8 @@ jobs:
       - name: Install Packages
         run: npm install
 
-      - name: Compile
-        run: tsc
-      
-      - if: always()
-        run: |
-          cp src/appsscript.json build/appsscript.json
+      - name: Build
+        run: npm run build
       
       - name: Upload Artifacts
         if: always()

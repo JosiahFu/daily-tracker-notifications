@@ -14,5 +14,8 @@
   "homepage": "https://github.com/JosiahFu/daily-tracker-notifications#readme",
   "dependencies": {
     "@types/google-apps-script": "^1.0.53"
+  },
+  "scripts": {
+    "build": "tsc; cp src/appsscript.json build/appsscript.json"
   }
 }
