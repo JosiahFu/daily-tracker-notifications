@@ -1,7 +1,5 @@
 let weekNum: number;
 
-// TODO: PD Weeks
-
 function getEvents(date: Date, trackerSpreadsheet: TrackerSpreadsheet): TrackerContents {
   console.log("Collecting events on " + (date.getMonth() + 1) + "/" + date.getDate() + " from " + trackerSpreadsheet.spreadsheet.getName());
 
@@ -106,7 +104,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
         }
         break;
 
-      case DateFormat.DateRange:
+      case DateFormat.DateRange: // TODO: This doesn't work for some reason`
         let results = pattern.exec(dateString);
         if (results == null)
           break;
@@ -150,7 +148,7 @@ function parseSubjectCalendar(calendarSheet: CalendarSheet, date: Date): Calenda
               break;
 
             case DateFormat.WeekBlockOnly:
-              // How do I do this?
+              // I'm going to ignore this one and hope no one uses this format next year
               break;
 
             case DateFormat.WeekDay:
