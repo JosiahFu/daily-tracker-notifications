@@ -1,3 +1,3 @@
 # daily-tracker-notifications
 
-A project I made for my school
+Now obsolete (no longer needed)
